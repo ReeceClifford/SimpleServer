@@ -26,9 +26,9 @@ namespace SimpleServer
        public void Start()
         {
             tcpListner.Start();
+            Console.WriteLine("Listener Started");
             while (true)
             {
-                Console.WriteLine("Listner started.");
                 Socket _socket = tcpListner.AcceptSocket();
                 Console.WriteLine("Connection Established");
 
