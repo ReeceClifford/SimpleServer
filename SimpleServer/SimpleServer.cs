@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
@@ -13,50 +14,55 @@ namespace SimpleServer
     class SimpleServer
     {
         TcpListener tcpListner;
+        List<Client> _clients;
 
         public void Server(string ipAddress, int port)
         {
             IPAddress ip = IPAddress.Parse(ipAddress);
             tcpListner = new TcpListener(ip, port);
+            _clients = new List<Client>();
         }
 
        public void Start()
         {
             tcpListner.Start();
-            Console.WriteLine("Listner started.");
+            while (true)
+            {
+                Console.WriteLine("Listner started.");
+                Socket _socket = tcpListner.AcceptSocket();
+                Console.WriteLine("Connection Established");
 
-            Socket socket = tcpListner.AcceptSocket();
-            Console.WriteLine("Connection Established");
+                var client = new Client(_socket);
+                _clients.Add(client);
 
-            SocketMethod(socket);
+                Thread t = new Thread(new ParameterizedThreadStart(ClientMethod));
+                t.Start(client);
+            };
         }
 
         public void Stop()
         {
             tcpListner.Stop();
         }
-
-        private void SocketMethod(Socket socket)
+  
+        private void ClientMethod(Object clientObj)
         {
             String receivedMessage;
-            NetworkStream stream = new NetworkStream(socket);
-            StreamReader reader = new StreamReader(stream, System.Text.Encoding.UTF8);
-            StreamWriter writer = new StreamWriter(stream, System.Text.Encoding.UTF8);
+            Client client = (Client)clientObj;
 
-            writer.WriteLine("Test message for the client");
-            writer.Flush();
+            client._writer.WriteLine("Type 1 or 2 for a response. Press 3 if you would like to exit.");
+            client._writer.Flush();
 
-            while ((receivedMessage = reader.ReadLine()) != null)
+            while ((receivedMessage = client._reader.ReadLine()) != null)
             {
-                string returnedMessage = GetReturnMessage(receivedMessage);
-
+                Console.WriteLine(receivedMessage);
                 if (receivedMessage == "END")
                     break;
 
-                writer.WriteLine(returnedMessage);
-                writer.Flush();
-            };
-            socket.Close();
+                client._writer.WriteLine(GetReturnMessage(receivedMessage));
+                client._writer.Flush();
+            }
+            _clients.Remove(client);
         }
 
         private string GetReturnMessage(string code)
@@ -65,7 +71,6 @@ namespace SimpleServer
             {
                 case "1":
                    return "Message reply for choice 1";
-                
                 case "2":
                     return "Message reply for choice 2";
                 case "3":
