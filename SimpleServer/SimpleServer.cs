@@ -61,6 +61,17 @@ namespace SimpleServer
 
                 client._writer.WriteLine(GetReturnMessage(receivedMessage));
                 client._writer.Flush();
+
+
+                for (int i = 0; i < _clients.Count; i++)
+                {
+                    if (_clients[i] != client)
+                    {
+                        _clients[i]._writer.WriteLine(receivedMessage);
+                        _clients[i]._writer.Flush();
+                    }
+
+                }
             }
             _clients.Remove(client);
         }

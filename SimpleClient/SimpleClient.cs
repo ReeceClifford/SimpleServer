@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
 using System.IO;
-
 
 namespace SimpleClient
 {
@@ -17,10 +17,15 @@ namespace SimpleClient
         NetworkStream stream;
         StreamWriter writer;
         StreamReader reader;
+        bool closed;
+
+        ClientForm messageForm;
+
 
         public void SimpleClientMain()
         {
             tcpClient = new TcpClient();
+            messageForm = new ClientForm();
         }
 
         public bool Connect(string ipAddress, int port)
@@ -45,19 +50,22 @@ namespace SimpleClient
         public void Run()
         {
             string userInput;
-            ProcessServerResponse();
+            //ProcessServerResponse();
+            Thread t = new Thread(Listen);
+            t.Start();
 
             while ((userInput = Console.ReadLine()) != null) 
             {
                 writer.WriteLine(userInput);
                 writer.Flush();
 
-                ProcessServerResponse();
+               // ProcessServerResponse();
 
                 if (userInput == "3")
                     break;
                 
             };
+            closed = true;
             tcpClient.Close();
         }
 
@@ -65,6 +73,18 @@ namespace SimpleClient
         {
             Console.WriteLine("Server says: " + reader.ReadLine());
             Console.WriteLine();
+        }
+
+        private void Listen()
+        {
+            while(!closed)
+            {
+                string recievedMessage = reader.ReadLine();
+                if(recievedMessage != null)
+                {
+                    Console.WriteLine(recievedMessage);
+                }
+            }
         }
     }
 }
