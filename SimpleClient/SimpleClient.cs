@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
 using System.IO;
+using System.Windows.Forms;
 
 namespace SimpleClient
 {
@@ -19,8 +20,9 @@ namespace SimpleClient
         StreamReader reader;
         bool closed;
 
+        // Windows Forms
         ClientForm messageForm;
-
+        Thread readerThread;
 
         public void SimpleClientMain()
         {
@@ -37,6 +39,10 @@ namespace SimpleClient
                 reader = new StreamReader(stream, System.Text.Encoding.UTF8);
                 writer = new StreamWriter(stream, System.Text.Encoding.UTF8);
 
+                // Windows Forms
+                readerThread = new Thread(ProcessServerResponse);
+                Application.Run(messageForm);
+
                 Console.WriteLine("Connected");
             }
             catch 
@@ -51,8 +57,10 @@ namespace SimpleClient
         {
             string userInput;
             //ProcessServerResponse();
-            Thread t = new Thread(Listen);
-            t.Start();
+           Thread t = new Thread(Listen);
+           t.Start();
+
+            readerThread.Start();
 
             while ((userInput = Console.ReadLine()) != null) 
             {
@@ -69,18 +77,32 @@ namespace SimpleClient
             tcpClient.Close();
         }
 
+        // Windows Forms
+        public void SendMessage(string message)
+        {
+            writer.WriteLine(message);
+            writer.Flush();
+        }
+
+        public void Stop()
+        {
+            readerThread.Abort();
+            tcpClient.Close();
+        }
+
         private void ProcessServerResponse()
         {
-            Console.WriteLine("Server says: " + reader.ReadLine());
-            Console.WriteLine();
+            //Console.WriteLine("Server says: " + reader.ReadLine());
+            //Console.WriteLine();
+            messageForm.UpdateChatWindow(reader.ReadLine());
         }
 
         private void Listen()
         {
-            while(!closed)
+            while (!closed)
             {
                 string recievedMessage = reader.ReadLine();
-                if(recievedMessage != null)
+                if (recievedMessage != null)
                 {
                     Console.WriteLine(recievedMessage);
                 }
