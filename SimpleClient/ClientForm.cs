@@ -16,11 +16,12 @@ namespace SimpleClient
         UpdateChatWindowDelegate _updateChatWindowDelegate;
         SimpleClient Client;
 
-        public ClientForm()
+        public ClientForm(object _client)
         {
             InitializeComponent();
             _updateChatWindowDelegate = new UpdateChatWindowDelegate(UpdateChatWindow);
-            Client = new SimpleClient();
+            Client = (SimpleClient) _client;
+            inputChat.Select();
         }
 
         public void UpdateChatWindow(string message)

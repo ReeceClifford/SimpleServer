@@ -27,7 +27,7 @@ namespace SimpleClient
         public void SimpleClientMain()
         {
             tcpClient = new TcpClient();
-            messageForm = new ClientForm();
+            messageForm = new ClientForm(this);
         }
 
         public bool Connect(string ipAddress, int port)
@@ -38,9 +38,9 @@ namespace SimpleClient
                 stream = tcpClient.GetStream();
                 reader = new StreamReader(stream, System.Text.Encoding.UTF8);
                 writer = new StreamWriter(stream, System.Text.Encoding.UTF8);
-
+                readerThread = new Thread(Listen);
                 // Windows Forms
-                readerThread = new Thread(ProcessServerResponse);
+
                 Application.Run(messageForm);
 
                 Console.WriteLine("Connected");
@@ -59,7 +59,7 @@ namespace SimpleClient
             //ProcessServerResponse();
            Thread t = new Thread(Listen);
            t.Start();
-
+     
             readerThread.Start();
 
             while ((userInput = Console.ReadLine()) != null) 

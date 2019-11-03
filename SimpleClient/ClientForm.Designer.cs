@@ -68,7 +68,7 @@
             this.Controls.Add(this.messageDisplay);
             this.Controls.Add(this.btnSubmit);
             this.Name = "ClientForm";
-            this.Text = "ClientForm";
+            this.Text = "Chat Application";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ClientForm_FormClosed);
             this.Load += new System.EventHandler(this.ClientForm_Load);
             this.ResumeLayout(false);
