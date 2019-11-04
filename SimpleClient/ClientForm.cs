@@ -26,15 +26,15 @@ namespace SimpleClient
 
         public void UpdateChatWindow(string message)
         {
-           if(inputChat.InvokeRequired)
+           if(messageDisplay.InvokeRequired)
             {
                 Invoke(_updateChatWindowDelegate, message);
             }
             else
             {
-                messageDisplay.Text += message;
-                inputChat.SelectionStart = inputChat.Text.Length;
-                inputChat.ScrollToCaret();
+                messageDisplay.Text += message + "\n";
+                messageDisplay.SelectionStart = messageDisplay.Text.Length;
+                messageDisplay.ScrollToCaret();
             }
          
         }
@@ -52,6 +52,7 @@ namespace SimpleClient
         private void BtnSubmit_Click(object sender, EventArgs e)
         {
             Client.SendMessage(inputChat.Text);
+            inputChat.Text = null;
         }
     }
 }

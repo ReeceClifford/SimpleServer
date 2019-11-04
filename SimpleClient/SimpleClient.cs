@@ -55,33 +55,21 @@ namespace SimpleClient
 
         public void Run()
         {
-            string userInput;
-            //ProcessServerResponse();
-           Thread t = new Thread(Listen);
-           t.Start();
-     
             readerThread.Start();
-
-            while ((userInput = Console.ReadLine()) != null) 
-            {
-                writer.WriteLine(userInput);
-                writer.Flush();
-
-               // ProcessServerResponse();
-
-                if (userInput == "3")
-                    break;
-                
-            };
-            closed = true;
-            tcpClient.Close();
+            
+          
         }
 
         // Windows Forms
         public void SendMessage(string message)
         {
-            writer.WriteLine(message);
-            writer.Flush();
+            string userInput = message;
+            //Pro
+            if (userInput != "")
+            {
+                writer.WriteLine(userInput);
+                writer.Flush();
+            };
         }
 
         public void Stop()
@@ -94,19 +82,17 @@ namespace SimpleClient
         {
             //Console.WriteLine("Server says: " + reader.ReadLine());
             //Console.WriteLine();
-            messageForm.UpdateChatWindow(reader.ReadLine());
+            //messageForm.UpdateChatWindow(reader.ReadLine());
         }
 
         private void Listen()
         {
-            while (!closed)
-            {
-                string recievedMessage = reader.ReadLine();
-                if (recievedMessage != null)
+                string recievedMessage;
+                while((recievedMessage = reader.ReadLine()) != null)
                 {
-                    Console.WriteLine(recievedMessage);
+                    messageForm.UpdateChatWindow(recievedMessage);
                 }
-            }
+            
         }
     }
 }

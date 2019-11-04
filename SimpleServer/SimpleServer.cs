@@ -56,39 +56,40 @@ namespace SimpleServer
             while ((receivedMessage = client._reader.ReadLine()) != null)
             {
                 Console.WriteLine(receivedMessage);
-                if (receivedMessage == "END")
-                    break;
+                //if (receivedMessage == "END")
+                //    break;
 
-                client._writer.WriteLine(GetReturnMessage(receivedMessage));
-                client._writer.Flush();
+              //  client._writer.WriteLine(GetReturnMessage(receivedMessage));
+               // client._writer.Flush();
 
 
                 for (int i = 0; i < _clients.Count; i++)
                 {
-                    if (_clients[i] != client)
-                    {
-                        _clients[i]._writer.WriteLine(receivedMessage);
+                    //Error Checking
+                    // if (_clients[i] != client)
+                    //{
+                    _clients[i]._writer.WriteLine(receivedMessage);
                         _clients[i]._writer.Flush();
-                    }
+                  // }
 
                 }
             }
             _clients.Remove(client);
         }
 
-        private string GetReturnMessage(string code)
-        {
-            switch (code)
-            {
-                case "1":
-                   return "Message reply for choice 1";
-                case "2":
-                    return "Message reply for choice 2";
-                case "3":
-                    return "END";
-                default:
-                    return "Choose 1 or 2";
-            }
-        }
+        //private string GetReturnMessage(string code)
+        //{
+        //    switch (code)
+        //    {
+        //        case "1":
+        //           return "Message reply for choice 1";
+        //        case "2":
+        //            return "Message reply for choice 2";
+        //        case "3":
+        //            return "END";
+        //        default:
+        //            return "Choose 1 or 2";
+        //    }
+        //}
     }
 }
