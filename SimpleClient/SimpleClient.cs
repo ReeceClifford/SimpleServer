@@ -18,7 +18,7 @@ namespace SimpleClient
         NetworkStream stream;
         StreamWriter writer;
         StreamReader reader;
-        bool closed;
+        
 
         // Windows Forms
         ClientForm messageForm;

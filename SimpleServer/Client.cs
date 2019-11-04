@@ -16,6 +16,7 @@ namespace SimpleServer
         public StreamReader _reader { get; private set; }
         public StreamWriter _writer { get; private set; }
 
+        public string nickName;
         public Client(Socket socket)
         {
             _socket = socket;

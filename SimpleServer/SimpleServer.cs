@@ -50,27 +50,29 @@ namespace SimpleServer
             String receivedMessage;
             Client client = (Client)clientObj;
 
-            client._writer.WriteLine("Type 1 or 2 for a response. Press 3 if you would like to exit.");
+            client._writer.WriteLine("Connection Made. \n Please Enter a Nickname");
             client._writer.Flush();
 
-            while ((receivedMessage = client._reader.ReadLine()) != null)
+            client.nickName = client._reader.ReadLine();
+
+
+            while ((receivedMessage = client._reader.ReadLine()) != null && client.nickName != "")
             {
                 Console.WriteLine(receivedMessage);
                 //if (receivedMessage == "END")
                 //    break;
 
-              //  client._writer.WriteLine(GetReturnMessage(receivedMessage));
-               // client._writer.Flush();
-
+                //  client._writer.WriteLine(GetReturnMessage(receivedMessage));
+                // client._writer.Flush();
 
                 for (int i = 0; i < _clients.Count; i++)
                 {
                     //Error Checking
                     // if (_clients[i] != client)
                     //{
-                    _clients[i]._writer.WriteLine(receivedMessage);
-                        _clients[i]._writer.Flush();
-                  // }
+                    _clients[i]._writer.WriteLine("< " + client.nickName + " > " + receivedMessage);
+                    _clients[i]._writer.Flush();
+                    // }
 
                 }
             }
