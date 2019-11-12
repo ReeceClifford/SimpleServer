@@ -16,11 +16,6 @@ namespace SimpleServer
         TcpListener tcpListner;
         List<Client> _clients;
 
-        public void Send(PacketType data)
-        {
-
-        }
-
         public void Server(string ipAddress, int port)
         {
             IPAddress ip = IPAddress.Parse(ipAddress);
@@ -77,20 +72,5 @@ namespace SimpleServer
             }
             _clients.Remove(client);
         }
-
-        //private string GetReturnMessage(string code)
-        //{
-        //    switch (code)
-        //    {
-        //        case "1":
-        //           return "Message reply for choice 1";
-        //        case "2":
-        //            return "Message reply for choice 2";
-        //        case "3":
-        //            return "END";
-        //        default:
-        //            return "Choose 1 or 2";
-        //    }
-        //}
     }
 }
