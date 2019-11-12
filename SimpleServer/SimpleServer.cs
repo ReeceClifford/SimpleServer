@@ -16,6 +16,11 @@ namespace SimpleServer
         TcpListener tcpListner;
         List<Client> _clients;
 
+        public void Send(PacketType data)
+        {
+
+        }
+
         public void Server(string ipAddress, int port)
         {
             IPAddress ip = IPAddress.Parse(ipAddress);
@@ -54,16 +59,11 @@ namespace SimpleServer
             client._writer.Flush();
 
             client.nickName = client._reader.ReadLine();
-
+            Console.WriteLine(client.nickName + " assigned");
 
             while ((receivedMessage = client._reader.ReadLine()) != null && client.nickName != "")
             {
                 Console.WriteLine(receivedMessage);
-                //if (receivedMessage == "END")
-                //    break;
-
-                //  client._writer.WriteLine(GetReturnMessage(receivedMessage));
-                // client._writer.Flush();
 
                 for (int i = 0; i < _clients.Count; i++)
                 {
@@ -73,7 +73,6 @@ namespace SimpleServer
                     _clients[i]._writer.WriteLine("< " + client.nickName + " > " + receivedMessage);
                     _clients[i]._writer.Flush();
                     // }
-
                 }
             }
             _clients.Remove(client);

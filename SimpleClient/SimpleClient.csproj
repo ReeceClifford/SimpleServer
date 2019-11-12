@@ -63,5 +63,11 @@
       <DependentUpon>ClientForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Packet\Packet.csproj">
+      <Project>{91572c33-309c-48ef-a27d-3df16b092917}</Project>
+      <Name>Packet</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

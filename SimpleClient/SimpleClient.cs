@@ -8,21 +8,36 @@ using System.Net.Sockets;
 using System.Net;
 using System.IO;
 using System.Windows.Forms;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 
 namespace SimpleClient
 {
-
     class SimpleClient
     {
         TcpClient tcpClient;
         NetworkStream stream;
-        StreamWriter writer;
+       // StreamWriter writer;
         StreamReader reader;
-        
 
-        // Windows Forms
         ClientForm messageForm;
         Thread readerThread;
+
+        BinaryWriter _writer;
+        BinaryFormatter bf = new BinaryFormatter();
+        PacketType packet;
+     
+       
+        public void Send(PacketType data)
+        {
+            MemoryStream ms = new MemoryStream();
+            bf.Serialize(ms, data);
+            byte[] buffer = ms.GetBuffer();
+
+            _writer.Write(buffer.Length);
+            _writer.Write(buffer);
+            _writer.Flush();
+        }
 
         public void SimpleClientMain()
         {
@@ -37,9 +52,10 @@ namespace SimpleClient
                 tcpClient.Connect(ipAddress, port);
                 stream = tcpClient.GetStream();
                 reader = new StreamReader(stream, System.Text.Encoding.UTF8);
-                writer = new StreamWriter(stream, System.Text.Encoding.UTF8);
+                //writer = new StreamWriter(stream, System.Text.Encoding.UTF8);
+                _writer = new BinaryWriter(stream);
+              
                 readerThread = new Thread(Listen);
-                // Windows Forms
 
                 Application.Run(messageForm);
 
@@ -56,15 +72,11 @@ namespace SimpleClient
         public void Run()
         {
             readerThread.Start();
-            
-          
         }
 
-        // Windows Forms
         public void SendMessage(string message)
         {
             string userInput = message;
-            //Pro
             if (userInput != "")
             {
                 writer.WriteLine(userInput);
@@ -80,9 +92,6 @@ namespace SimpleClient
 
         private void ProcessServerResponse()
         {
-            //Console.WriteLine("Server says: " + reader.ReadLine());
-            //Console.WriteLine();
-            //messageForm.UpdateChatWindow(reader.ReadLine());
         }
 
         private void Listen()
