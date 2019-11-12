@@ -17,27 +17,10 @@ namespace SimpleClient
     {
         TcpClient tcpClient;
         NetworkStream stream;
-       // StreamWriter writer;
         StreamReader reader;
-
+        StreamWriter writer;
         ClientForm messageForm;
         Thread readerThread;
-
-        BinaryWriter _writer;
-        BinaryFormatter bf = new BinaryFormatter();
-        PacketType packet;
-     
-       
-        public void Send(PacketType data)
-        {
-            MemoryStream ms = new MemoryStream();
-            bf.Serialize(ms, data);
-            byte[] buffer = ms.GetBuffer();
-
-            _writer.Write(buffer.Length);
-            _writer.Write(buffer);
-            _writer.Flush();
-        }
 
         public void SimpleClientMain()
         {
@@ -52,9 +35,8 @@ namespace SimpleClient
                 tcpClient.Connect(ipAddress, port);
                 stream = tcpClient.GetStream();
                 reader = new StreamReader(stream, System.Text.Encoding.UTF8);
-                //writer = new StreamWriter(stream, System.Text.Encoding.UTF8);
-                _writer = new BinaryWriter(stream);
-              
+                writer = new StreamWriter(stream, System.Text.Encoding.UTF8);
+           
                 readerThread = new Thread(Listen);
 
                 Application.Run(messageForm);
@@ -88,10 +70,6 @@ namespace SimpleClient
         {
             readerThread.Abort();
             tcpClient.Close();
-        }
-
-        private void ProcessServerResponse()
-        {
         }
 
         private void Listen()

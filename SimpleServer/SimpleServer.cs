@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
+
 
 
 namespace SimpleServer
@@ -50,12 +53,12 @@ namespace SimpleServer
             String receivedMessage;
             Client client = (Client)clientObj;
 
-            client._writer.WriteLine("Connection Made. \n Please Enter a Nickname");
+            client._writer.WriteLine("Connection Made. \nPlease Enter a Nickname");
             client._writer.Flush();
 
             client.nickName = client._reader.ReadLine();
-            Console.WriteLine(client.nickName + " assigned");
-
+            Console.WriteLine("Client assigned Nickname " + client.nickName);
+            
             while ((receivedMessage = client._reader.ReadLine()) != null && client.nickName != "")
             {
                 Console.WriteLine(receivedMessage);

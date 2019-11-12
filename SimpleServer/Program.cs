@@ -11,7 +11,6 @@ namespace SimpleServer
         static void Main(string[] args)
         {
             SimpleServer server = new SimpleServer();
-
             server.Server("127.0.0.1", 4444);
             server.Start();
             server.Stop();
