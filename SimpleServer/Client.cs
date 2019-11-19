@@ -15,16 +15,29 @@ namespace SimpleServer
     {
         private Socket _socket;
         private NetworkStream _stream;
-        public StreamReader _reader { get; private set; }
-        public StreamWriter _writer { get; private set; }
+        public BinaryWriter _writer;
+        public BinaryReader _reader;
         public string nickName;
+        BinaryFormatter bf;
 
         public Client(Socket socket)
         {
             _socket = socket;
             _stream = new NetworkStream(_socket);
-            _reader = new StreamReader(_stream, System.Text.Encoding.UTF8);
-            _writer = new StreamWriter(_stream, System.Text.Encoding.UTF8);
+            _reader = new BinaryReader(_stream);
+            _writer = new BinaryWriter(_stream);
+            bf = new BinaryFormatter();
+        }
+
+        public void Send(Packet data)
+        {
+            MemoryStream ms = new MemoryStream();
+            bf.Serialize(ms, data);
+            byte[] buffer = ms.GetBuffer();
+
+            _writer.Write(buffer.Length);
+            _writer.Write(buffer);
+            _writer.Flush();
         }
         
         public void Close()

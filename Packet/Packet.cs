@@ -12,9 +12,6 @@ public enum PacketType
     USERLIST,
 }
 
-namespace Packet
-{
-
     [Serializable]
     public class Packet
     {
@@ -45,4 +42,4 @@ namespace Packet
         }
     }
 
-}
+

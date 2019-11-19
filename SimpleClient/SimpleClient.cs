@@ -17,10 +17,16 @@ namespace SimpleClient
     {
         TcpClient tcpClient;
         NetworkStream stream;
-        StreamReader reader;
-        StreamWriter writer;
+        //StreamReader reader;
+        //StreamWriter writer;
+        BinaryReader reader;
+        BinaryWriter writer;
+        BinaryFormatter bf;
+
         ClientForm messageForm;
         Thread readerThread;
+
+        public object _clients { get; private set; }
 
         public void SimpleClientMain()
         {
@@ -34,9 +40,9 @@ namespace SimpleClient
             {
                 tcpClient.Connect(ipAddress, port);
                 stream = tcpClient.GetStream();
-                reader = new StreamReader(stream, System.Text.Encoding.UTF8);
-                writer = new StreamWriter(stream, System.Text.Encoding.UTF8);
-           
+                reader = new BinaryReader(stream, System.Text.Encoding.UTF8);
+                writer = new BinaryWriter(stream, System.Text.Encoding.UTF8);
+                bf = new BinaryFormatter();
                 readerThread = new Thread(Listen);
 
                 Application.Run(messageForm);
@@ -61,7 +67,7 @@ namespace SimpleClient
             string userInput = message;
             if (userInput != "")
             {
-                writer.WriteLine(userInput);
+                writer.Write(userInput);
                 writer.Flush();
             };
         }
@@ -74,12 +80,37 @@ namespace SimpleClient
 
         private void Listen()
         {
-                string recievedMessage;
-                while((recievedMessage = reader.ReadLine()) != null)
+            int numberOfIncomingBytes;
+            while ((numberOfIncomingBytes = reader.ReadInt32()) != 0)
+            {
+                MemoryStream ms = new MemoryStream();
+                byte[] byteData = reader.ReadBytes(numberOfIncomingBytes);
+
+                ms.Write(byteData, 0, byteData.Length);
+                ms.Position = 0;
+
+                Packet packet = bf.Deserialize(ms) as Packet;
+                switch (packet.type)
                 {
-                    messageForm.UpdateChatWindow(recievedMessage);
+                    case PacketType.CHATMESSAGE:
+                        ChatMessagePacket chatPacket = (ChatMessagePacket)packet;
+                        Console.WriteLine(chatPacket.message);
+                        chatPacket.message = chatPacket.message;
+                        Send(chatPacket);
+                        break;
                 }
-            
+            }
+        }
+
+        public void Send(Packet data)
+        {
+            MemoryStream ms = new MemoryStream();
+            bf.Serialize(ms, data);
+            byte[] buffer = ms.GetBuffer();
+
+            writer.Write(buffer.Length);
+            writer.Write(buffer);
+            writer.Flush();
         }
     }
 }
