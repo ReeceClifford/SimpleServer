@@ -17,12 +17,9 @@ namespace SimpleClient
     {
         TcpClient tcpClient;
         NetworkStream stream;
-        //StreamReader reader;
-        //StreamWriter writer;
         BinaryReader reader;
         BinaryWriter writer;
         BinaryFormatter bf;
-
         ClientForm messageForm;
         Thread readerThread;
 
@@ -62,22 +59,6 @@ namespace SimpleClient
             readerThread.Start();
         }
 
-        public void SendMessage(string message)
-        {
-            string userInput = message;
-            if (userInput != "")
-            {
-                writer.Write(userInput);
-                writer.Flush();
-            };
-        }
-
-        public void Stop()
-        {
-            readerThread.Abort();
-            tcpClient.Close();
-        }
-
         private void Listen()
         {
             int numberOfIncomingBytes;
@@ -111,6 +92,22 @@ namespace SimpleClient
             writer.Write(buffer.Length);
             writer.Write(buffer);
             writer.Flush();
+        }
+
+        public void SendMessage(string message)
+        {
+            string userInput = message;
+            if (userInput != "")
+            {
+                writer.Write(userInput);
+                writer.Flush();
+            };
+        }
+
+        public void Stop()
+        {
+            readerThread.Abort();
+            tcpClient.Close();
         }
     }
 }

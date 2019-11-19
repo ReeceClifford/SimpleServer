@@ -24,6 +24,17 @@ namespace SimpleClient
             inputChat.Select();
         }
 
+        private void ClientForm_Load(object sender, EventArgs e)
+        {
+            Client.Run();
+        }
+
+        private void BtnSubmit_Click(object sender, EventArgs e)
+        {
+            Client.SendMessage(inputChat.Text);
+            inputChat.Text = null;
+        }
+
         public void UpdateChatWindow(string message)
         {
            if(messageDisplay.InvokeRequired)
@@ -36,23 +47,11 @@ namespace SimpleClient
                 messageDisplay.SelectionStart = messageDisplay.Text.Length;
                 messageDisplay.ScrollToCaret();
             }
-         
-        }
-
-        private void ClientForm_Load(object sender, EventArgs e)
-        {
-            Client.Run();
         }
 
         private void ClientForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             Client.Stop();
-        }
-
-        private void BtnSubmit_Click(object sender, EventArgs e)
-        {
-            Client.SendMessage(inputChat.Text);
-            inputChat.Text = null;
         }
     }
 }

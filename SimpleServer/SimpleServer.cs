@@ -10,8 +10,6 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 
-
-
 namespace SimpleServer
 {
     class SimpleServer
@@ -26,7 +24,7 @@ namespace SimpleServer
             _clients = new List<Client>();
         }
 
-       public void Start()
+        public void Start()
         {
             tcpListner.Start();
             Console.WriteLine("Listener Started");
@@ -43,23 +41,18 @@ namespace SimpleServer
             };
         }
 
-        public void Stop()
-        {
-            tcpListner.Stop();
-        }
-  
         private void ClientMethod(Object clientObj)
         {
             String receivedMessage;
             Client client = (Client)clientObj;
 
-            client._writer.WriteLine("Connection Made. \nPlease Enter a Nickname");
+            client._writer.Write("Connection Made. \nPlease Enter a Nickname");
             client._writer.Flush();
 
-            client.nickName = client._reader.ReadLine();
+            client.nickName = client._reader.Read();
             Console.WriteLine("Client assigned Nickname " + client.nickName);
             
-            while ((receivedMessage = client._reader.ReadLine()) != null && client.nickName != "")
+            while ((receivedMessage = client._reader.Read()) != null && client.nickName != "")
             {
                 Console.WriteLine(receivedMessage);
 
@@ -68,12 +61,18 @@ namespace SimpleServer
                     //Error Checking
                     // if (_clients[i] != client)
                     //{
-                    _clients[i]._writer.WriteLine("< " + client.nickName + " > " + receivedMessage);
+                    _clients[i]._writer.Write("< " + client.nickName + " > " + receivedMessage);
                     _clients[i]._writer.Flush();
                     // }
                 }
             }
             _clients.Remove(client);
         }
+
+        public void Stop()
+        {
+            tcpListner.Stop();
+        }
     }
+
 }
