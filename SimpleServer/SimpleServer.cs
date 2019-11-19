@@ -46,10 +46,10 @@ namespace SimpleServer
             String receivedMessage;
             Client client = (Client)clientObj;
 
-            client._writer.Write("Connection Made. \nPlease Enter a Nickname");
+            client._writer.Write("Connection Made." /*\nPlease Enter a Nickname*/);
             client._writer.Flush();
 
-            client.nickName = client._reader.Read();
+            //client.nickName = client._reader.Read();
             Console.WriteLine("Client assigned Nickname " + client.nickName);
             
             while ((receivedMessage = client._reader.Read()) != null && client.nickName != "")
@@ -58,12 +58,8 @@ namespace SimpleServer
 
                 for (int i = 0; i < _clients.Count; i++)
                 {
-                    //Error Checking
-                    // if (_clients[i] != client)
-                    //{
                     _clients[i]._writer.Write("< " + client.nickName + " > " + receivedMessage);
                     _clients[i]._writer.Flush();
-                    // }
                 }
             }
             _clients.Remove(client);
