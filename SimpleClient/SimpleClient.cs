@@ -19,7 +19,7 @@ namespace SimpleClient
         NetworkStream stream;
         BinaryReader reader;
         BinaryWriter writer;
-        BinaryFormatter bf;
+        BinaryFormatter binaryFormatter;
         ClientForm messageForm;
         Thread readerThread;
 
@@ -39,7 +39,7 @@ namespace SimpleClient
                 stream = tcpClient.GetStream();
                 reader = new BinaryReader(stream, System.Text.Encoding.UTF8);
                 writer = new BinaryWriter(stream, System.Text.Encoding.UTF8);
-                bf = new BinaryFormatter();
+                binaryFormatter = new BinaryFormatter();
                 readerThread = new Thread(Listen);
 
                 Application.Run(messageForm);
@@ -70,14 +70,14 @@ namespace SimpleClient
                 ms.Write(byteData, 0, byteData.Length);
                 ms.Position = 0;
 
-                Packet packet = bf.Deserialize(ms) as Packet;
+                Packet packet = binaryFormatter.Deserialize(ms) as Packet;
                 switch (packet.type)
                 {
                     case PacketType.CHATMESSAGE:
                         ChatMessagePacket chatPacket = (ChatMessagePacket)packet;
                         Console.WriteLine(chatPacket.message);
                         chatPacket.message = "User" + chatPacket.message;
-                        SendMessage(chatPacket.message);
+                        Send(chatPacket);
                         break;
                     //case PacketType.NICKNAME:
                     //    NickNamePacket nicknamePacket = (NickNamePacket)packet;
@@ -90,7 +90,7 @@ namespace SimpleClient
         public void Send(Packet data)
         {
             MemoryStream ms = new MemoryStream();
-            bf.Serialize(ms, data);
+            binaryFormatter.Serialize(ms, data);
             byte[] buffer = ms.GetBuffer();
 
             writer.Write(buffer.Length);

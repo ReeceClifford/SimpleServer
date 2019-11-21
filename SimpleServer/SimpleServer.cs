@@ -15,13 +15,13 @@ namespace SimpleServer
     class SimpleServer
     {
         TcpListener tcpListner;
-        List<Client> _clients;
+        List<Client> clients;
 
         public void Server(string ipAddress, int port)
         {
             IPAddress ip = IPAddress.Parse(ipAddress);
             tcpListner = new TcpListener(ip, port);
-            _clients = new List<Client>();
+            clients = new List<Client>();
         }
 
         public void Start()
@@ -34,7 +34,7 @@ namespace SimpleServer
                 Console.WriteLine("Connection Established");
 
                 var client = new Client(_socket);
-                _clients.Add(client);
+                clients.Add(client);
 
                 Thread t = new Thread(new ParameterizedThreadStart(ClientMethod));
                 t.Start(client);
@@ -45,24 +45,22 @@ namespace SimpleServer
         {
             String receivedMessage;
             Client client = (Client)clientObj;
-
             client._writer.Write("Connection Made." /*\nPlease Enter a Nickname*/);
             client._writer.Flush();
-
             //client.nickName = client._reader.Read();
             Console.WriteLine("Client assigned Nickname " + client.nickName);
-            
-            while ((receivedMessage = client._reader.Read()) != null && client.nickName != "")
-            {
-                Console.WriteLine(receivedMessage);
 
-                for (int i = 0; i < _clients.Count; i++)
+            int numberOfIncomingBytes;
+            while ((numberOfIncomingBytes = client._reader.ReadInt32()) != 0 /*&& client.nickName != ""*/)
+            {
+                //Console.WriteLine(receivedMessage);
+                for (int i = 0; i < clients.Count; i++)
                 {
-                    _clients[i]._writer.Write("< " + client.nickName + " > " + receivedMessage);
-                    _clients[i]._writer.Flush();
+                    clients[i]._writer.Write("< " + client.nickName + " > ");
+                    clients[i]._writer.Flush();
                 }
             }
-            _clients.Remove(client);
+            clients.Remove(client);
         }
 
         public void Stop()

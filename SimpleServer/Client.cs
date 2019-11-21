@@ -18,7 +18,8 @@ namespace SimpleServer
         public BinaryWriter _writer;
         public BinaryReader _reader;
         public string nickName;
-        BinaryFormatter bf;
+
+        BinaryFormatter _binaryFormatter;
 
         public Client(Socket socket)
         {
@@ -26,13 +27,13 @@ namespace SimpleServer
             _stream = new NetworkStream(_socket);
             _reader = new BinaryReader(_stream);
             _writer = new BinaryWriter(_stream);
-            bf = new BinaryFormatter();
+            _binaryFormatter = new BinaryFormatter();
         }
 
         public void Send(Packet data)
         {
             MemoryStream ms = new MemoryStream();
-            bf.Serialize(ms, data);
+            _binaryFormatter.Serialize(ms, data);
             byte[] buffer = ms.GetBuffer();
 
             _writer.Write(buffer.Length);
