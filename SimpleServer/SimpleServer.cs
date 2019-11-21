@@ -41,6 +41,7 @@ namespace SimpleServer
             };
         }
 
+        //Need to be changed....
         private void ClientMethod(Object clientObj)
         {
             String receivedMessage;
@@ -50,16 +51,15 @@ namespace SimpleServer
             //client.nickName = client._reader.Read();
             Console.WriteLine("Client assigned Nickname " + client.nickName);
 
-            int numberOfIncomingBytes;
-            while ((numberOfIncomingBytes = client._reader.ReadInt32()) != 0 /*&& client.nickName != ""*/)
-            {
-                //Console.WriteLine(receivedMessage);
-                for (int i = 0; i < clients.Count; i++)
-                {
-                    clients[i]._writer.Write("< " + client.nickName + " > ");
-                    clients[i]._writer.Flush();
-                }
-            }
+            //int numberOfIncomingBytes;
+            //while ((numberOfIncomingBytes = client._reader.ReadInt32()) != 0 /*&& client.nickName != ""*/)
+            //{
+            //    for (int i = 0; i < clients.Count; i++)
+            //    {
+            //        clients[i]._writer.Write("< " + client.nickName + " > " + receivedMessage);
+            //        clients[i]._writer.Flush();
+            //    }
+            //}
             clients.Remove(client);
         }
 

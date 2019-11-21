@@ -37,15 +37,15 @@ namespace SimpleClient
 
         public void UpdateChatWindow(string message)
         {
-           if(messageDisplay.InvokeRequired)
+           if(chatRelay.InvokeRequired)
             {
                 Invoke(_updateChatWindowDelegate, message);
             }
             else
             {
-                messageDisplay.Text += message + "\n";
-                messageDisplay.SelectionStart = messageDisplay.Text.Length;
-                messageDisplay.ScrollToCaret();
+                chatRelay.Text += message + "\n";
+                chatRelay.SelectionStart = chatRelay.Text.Length;
+                chatRelay.ScrollToCaret();
             }
         }
 
@@ -53,5 +53,7 @@ namespace SimpleClient
         {
             Client.Stop();
         }
+
+
     }
 }

@@ -69,8 +69,9 @@ namespace SimpleClient
 
                 ms.Write(byteData, 0, byteData.Length);
                 ms.Position = 0;
-
+                
                 Packet packet = binaryFormatter.Deserialize(ms) as Packet;
+                Console.WriteLine("Packet Deserialized");
                 switch (packet.type)
                 {
                     case PacketType.CHATMESSAGE:
