@@ -44,22 +44,21 @@ namespace SimpleServer
         //Need to be changed....
         private void ClientMethod(Object clientObj)
         {
-            String receivedMessage;
             Client client = (Client)clientObj;
-            client._writer.Write("Connection Made." /*\nPlease Enter a Nickname*/);
-            client._writer.Flush();
-            //client.nickName = client._reader.Read();
-            Console.WriteLine("Client assigned Nickname " + client.nickName);
+            int numberOfIncomingBytes;
+            while ((numberOfIncomingBytes = client._reader.ReadInt32()) != 0)
+            {
+                MemoryStream ms = new MemoryStream();
+                byte[] byteData = client._reader.ReadBytes(numberOfIncomingBytes);
 
-            //int numberOfIncomingBytes;
-            //while ((numberOfIncomingBytes = client._reader.ReadInt32()) != 0 /*&& client.nickName != ""*/)
-            //{
-            //    for (int i = 0; i < clients.Count; i++)
-            //    {
-            //        clients[i]._writer.Write("< " + client.nickName + " > " + receivedMessage);
-            //        clients[i]._writer.Flush();
-            //    }
-            //}
+                ms.Write(byteData, 0, byteData.Length);
+                ms.Position = 0;
+
+                BinaryFormatter bf = new BinaryFormatter();
+                Packet packet = bf.Deserialize(ms) as Packet;
+                client.Send(packet);
+            }
+            Console.WriteLine("Client assigned Nickname " + client.nickName);
             clients.Remove(client);
         }
 

@@ -31,7 +31,7 @@ namespace SimpleClient
 
         private void BtnSubmit_Click(object sender, EventArgs e)
         {
-            Client.SendMessage(inputChat.Text);
+            Client.Send(new ChatMessagePacket(inputChat.Text));
             inputChat.Text = null;
         }
 

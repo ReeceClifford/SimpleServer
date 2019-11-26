@@ -40,6 +40,8 @@ namespace SimpleServer
             _writer.Write(buffer);
             _writer.Flush();
         }
+    
+        
         
         public void Close()
         {
