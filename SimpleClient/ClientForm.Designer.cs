@@ -70,6 +70,7 @@
             this.connectDcBtn.TabIndex = 4;
             this.connectDcBtn.Text = "Connect";
             this.connectDcBtn.UseVisualStyleBackColor = true;
+            this.connectDcBtn.Click += new System.EventHandler(this.ConnectDcBtn_Click);
             // 
             // nicknameTextBox
             // 

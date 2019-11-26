@@ -54,6 +54,21 @@ namespace SimpleClient
             Client.Stop();
         }
 
+        private void ConnectDcBtn_Click(object sender, EventArgs e)
+        {
+            if(nicknameTextBox.Text != "")
+            {
+                chatRelay.Text = "Weclome to the Chat room";
+                Client.Send(new NickNamePacket(nicknameTextBox.Text));
+                nicknameLabel.Visible = false;
+                nicknameTextBox.Visible = false;
+                connectDcBtn.Text = "Disconnect";
+            }
+            else
+            {
+                chatRelay.Text = "ENTER NICKNAME BEFORE YOU CONNECT";
+            }
 
+        }
     }
 }

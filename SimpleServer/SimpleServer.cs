@@ -40,8 +40,8 @@ namespace SimpleServer
                 t.Start(client);
             };
         }
-
-        //Need to be changed....
+ 
+ 
         private void ClientMethod(Object clientObj)
         {
             Client client = (Client)clientObj;
@@ -56,9 +56,11 @@ namespace SimpleServer
 
                 BinaryFormatter bf = new BinaryFormatter();
                 Packet packet = bf.Deserialize(ms) as Packet;
-                client.Send(packet);
+                for (int i = 0; i < clients.Count; i++)
+                {
+                    clients[i].Send(packet);
+                }
             }
-            Console.WriteLine("Client assigned Nickname " + client.nickName);
             clients.Remove(client);
         }
 

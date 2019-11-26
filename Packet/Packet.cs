@@ -9,7 +9,6 @@ public enum PacketType
     EMPTY,
     CHATMESSAGE,
     NICKNAME,
-    USERLIST,
 }
 
 [Serializable]

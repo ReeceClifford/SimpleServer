@@ -30,6 +30,8 @@ namespace SimpleServer
             _binaryFormatter = new BinaryFormatter();
         }
 
+        
+
         public void Send(Packet data)
         {
             MemoryStream ms = new MemoryStream();
