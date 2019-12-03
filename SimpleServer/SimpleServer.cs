@@ -15,13 +15,13 @@ namespace SimpleServer
     class SimpleServer
     {
         TcpListener tcpListner;
-        List<Client> clients;
+        List<Client> clientsList;
 
         public void Server(string ipAddress, int port)
         {
             IPAddress ip = IPAddress.Parse(ipAddress);
             tcpListner = new TcpListener(ip, port);
-            clients = new List<Client>();
+            clientsList = new List<Client>();
         }
 
         public void Start()
@@ -34,18 +34,17 @@ namespace SimpleServer
                 Console.WriteLine("Connection Established");
 
                 var client = new Client(_tcpSocket);
-                clients.Add(client);
+                clientsList.Add(client);
 
                 Thread t = new Thread(new ParameterizedThreadStart(ClientMethod));
                 t.Start(client);
             };
         }
  
- 
         private void ClientMethod(Object clientObj)
         {
             Client client = (Client)clientObj;
-            client.nickName = "Username " + clients.Count;
+            
 
             int noOfIncomingBytes = 0;
             while ((noOfIncomingBytes = client._reader.ReadInt32()) != 0)
@@ -63,9 +62,9 @@ namespace SimpleServer
                         ChatMessagePacket chatPack = (ChatMessagePacket)packet;
                         Console.WriteLine(chatPack.message);
                         chatPack.message = "[ " + client.nickName + " ] " + chatPack.message;
-                        for (int i = 0; i < clients.Count; i++)
+                        for (int i = 0; i < clientsList.Count; i++)
                         {
-                            clients[i].Send(packet);
+                            clientsList[i].tcpSend(packet);
                         }
                         break;
                     case PacketType.NICKNAME:
@@ -74,8 +73,7 @@ namespace SimpleServer
                         break;
                 }
             }
-            clients.Remove(client);
-
+            clientsList.Remove(client);
         }
 
         public void Stop()

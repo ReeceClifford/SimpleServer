@@ -82,7 +82,6 @@ namespace SimpleClient
                 }
             }
         }
-     
 
         public void Send(Packet data)
         {
@@ -94,7 +93,6 @@ namespace SimpleClient
             writer.Write(buffer);
             writer.Flush();
         }
-
 
 
         public void Stop()

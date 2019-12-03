@@ -31,8 +31,15 @@ namespace SimpleClient
 
         private void BtnSubmit_Click(object sender, EventArgs e)
         {
-            Client.Send(new ChatMessagePacket(inputChat.Text));
-            inputChat.Text = null;
+            if (nicknameTextBox.Text != "")
+            {
+                Client.Send(new ChatMessagePacket(inputChat.Text));
+                inputChat.Text = null;
+            }
+            else
+            {
+                chatRelay.Text = "You must have a nickname to talk";
+            }
         }
 
         public void UpdateChatWindow(string message)

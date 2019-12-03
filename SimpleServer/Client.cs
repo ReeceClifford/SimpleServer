@@ -38,8 +38,29 @@ namespace SimpleServer
             _binaryFormatter = new BinaryFormatter();
         }
 
+        //UDP and TCP Task
+        void UDPConnect(EndPoint clientConnection)
+        {
+            _udpSocket.Connect(clientConnection);
+            _udpSocket.Bind(clientConnection);
+
+        }
+
+        //UDP and TCP Task
+        void UDPSend(Packet packet)
+        {
+            MemoryStream ms = new MemoryStream();
+            _binaryFormatter.Serialize(ms, packet);
+            byte[] buffer = ms.GetBuffer();
+
+            _writer.Write(buffer.Length);
+            _writer.Write(buffer);
+            _writer.Flush();
+
+            _udpSocket.Send(buffer);
+        }
         
-        public void Send(Packet data)
+        public void tcpSend(Packet data)
         {
             MemoryStream ms = new MemoryStream();
             _binaryFormatter.Serialize(ms, data);
@@ -53,7 +74,6 @@ namespace SimpleServer
         public void Close()
         {
             _tcpSocket.Close();
-            _udpSocket.Close();
         }
     }
 }
