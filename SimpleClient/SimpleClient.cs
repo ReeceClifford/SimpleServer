@@ -77,14 +77,7 @@ namespace SimpleClient
                     case PacketType.CHATMESSAGE:
                         ChatMessagePacket chatPacket = (ChatMessagePacket)packet;
                         Console.WriteLine(chatPacket.message);
-                        chatPacket.message =  chatPacket.message;
                         messageForm.UpdateChatWindow(chatPacket.message);
-                        break;
-
-                    case PacketType.NICKNAME:
-                        NickNamePacket nicknamePacket = (NickNamePacket)packet;
-                        Console.WriteLine(nicknamePacket.nickName);
-                        
                         break;
                 }
             }
@@ -102,15 +95,7 @@ namespace SimpleClient
             writer.Flush();
         }
 
-        public void SendMessage(string message)
-        {
-            string userInput = message;
-            if (userInput != "")
-            {
-                writer.Write(userInput);
-                writer.Flush();
-            };
-        }// Currently Not in use.
+
 
         public void Stop()
         {

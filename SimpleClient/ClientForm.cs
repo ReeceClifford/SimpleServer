@@ -58,7 +58,7 @@ namespace SimpleClient
         {
             if(nicknameTextBox.Text != "")
             {
-                chatRelay.Text = "Weclome to the Chat room";
+                chatRelay.Text = "Weclome to the Chat room\n";
                 Client.Send(new NickNamePacket(nicknameTextBox.Text));
                 nicknameLabel.Visible = false;
                 nicknameTextBox.Visible = false;

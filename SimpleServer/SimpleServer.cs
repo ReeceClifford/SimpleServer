@@ -30,10 +30,10 @@ namespace SimpleServer
             Console.WriteLine("Listener Started");
             while (true)
             {
-                Socket _socket = tcpListner.AcceptSocket();
+                Socket _tcpSocket = tcpListner.AcceptSocket();
                 Console.WriteLine("Connection Established");
 
-                var client = new Client(_socket);
+                var client = new Client(_tcpSocket);
                 clients.Add(client);
 
                 Thread t = new Thread(new ParameterizedThreadStart(ClientMethod));
@@ -45,23 +45,37 @@ namespace SimpleServer
         private void ClientMethod(Object clientObj)
         {
             Client client = (Client)clientObj;
-            int numberOfIncomingBytes;
-            while ((numberOfIncomingBytes = client._reader.ReadInt32()) != 0)
+            client.nickName = "Username " + clients.Count;
+
+            int noOfIncomingBytes = 0;
+            while ((noOfIncomingBytes = client._reader.ReadInt32()) != 0)
             {
                 MemoryStream ms = new MemoryStream();
-                byte[] byteData = client._reader.ReadBytes(numberOfIncomingBytes);
+                byte[] byteData = client._reader.ReadBytes(noOfIncomingBytes);
 
                 ms.Write(byteData, 0, byteData.Length);
                 ms.Position = 0;
-
                 BinaryFormatter bf = new BinaryFormatter();
                 Packet packet = bf.Deserialize(ms) as Packet;
-                for (int i = 0; i < clients.Count; i++)
+                switch (packet.type)
                 {
-                    clients[i].Send(packet);
+                    case PacketType.CHATMESSAGE:
+                        ChatMessagePacket chatPack = (ChatMessagePacket)packet;
+                        Console.WriteLine(chatPack.message);
+                        chatPack.message = "[ " + client.nickName + " ] " + chatPack.message;
+                        for (int i = 0; i < clients.Count; i++)
+                        {
+                            clients[i].Send(packet);
+                        }
+                        break;
+                    case PacketType.NICKNAME:
+                        NickNamePacket nicknamePacket = (NickNamePacket)packet;
+                        client.nickName = nicknamePacket.nickName;
+                        break;
                 }
             }
             clients.Remove(client);
+
         }
 
         public void Stop()

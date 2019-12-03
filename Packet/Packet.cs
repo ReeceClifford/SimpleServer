@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net;
 
 public enum PacketType
 {
     EMPTY,
     CHATMESSAGE,
     NICKNAME,
+    LOGIN,
 }
 
 [Serializable]
@@ -36,6 +38,17 @@ public class NickNamePacket : Packet
     {
         this.type = PacketType.NICKNAME;
         this.nickName = nickName;
+    }
+}
+//Added for UDP and TCP Task
+[Serializable]
+public class LoginPacket : Packet
+{
+    public EndPoint endPoint;
+    public LoginPacket(EndPoint endPoint)
+    {
+        this.type = PacketType.LOGIN;
+        this.endPoint = endPoint;
     }
 }
 

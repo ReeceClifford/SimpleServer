@@ -34,6 +34,7 @@
             this.connectDcBtn = new System.Windows.Forms.Button();
             this.nicknameTextBox = new System.Windows.Forms.RichTextBox();
             this.nicknameLabel = new System.Windows.Forms.Label();
+            this.activeClientList = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // btnSubmit
@@ -89,11 +90,20 @@
             this.nicknameLabel.TabIndex = 7;
             this.nicknameLabel.Text = "Enter Desired Nickname";
             // 
+            // activeClientList
+            // 
+            this.activeClientList.Location = new System.Drawing.Point(864, 52);
+            this.activeClientList.Name = "activeClientList";
+            this.activeClientList.Size = new System.Drawing.Size(140, 441);
+            this.activeClientList.TabIndex = 8;
+            this.activeClientList.Text = "";
+            // 
             // ClientForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1016, 573);
+            this.Controls.Add(this.activeClientList);
             this.Controls.Add(this.nicknameLabel);
             this.Controls.Add(this.nicknameTextBox);
             this.Controls.Add(this.connectDcBtn);
@@ -117,5 +127,6 @@
         private System.Windows.Forms.Button connectDcBtn;
         private System.Windows.Forms.RichTextBox nicknameTextBox;
         private System.Windows.Forms.Label nicknameLabel;
+        private System.Windows.Forms.RichTextBox activeClientList;
     }
 }

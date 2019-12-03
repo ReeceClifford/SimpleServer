@@ -13,7 +13,11 @@ namespace SimpleServer
 {
     class Client
     {
-        private Socket _socket;
+        private Socket _tcpSocket;
+
+        //UDP and TCP Task
+        private Socket _udpSocket;
+
         private NetworkStream _stream;
         public BinaryWriter _writer;
         public BinaryReader _reader;
@@ -21,17 +25,20 @@ namespace SimpleServer
 
         BinaryFormatter _binaryFormatter;
 
-        public Client(Socket socket)
+        public Client(Socket tcpSocket)
         {
-            _socket = socket;
-            _stream = new NetworkStream(_socket);
+            _tcpSocket = tcpSocket;
+
+            //UDP and TCP Task
+            _udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+            _stream = new NetworkStream(_tcpSocket);
             _reader = new BinaryReader(_stream);
             _writer = new BinaryWriter(_stream);
             _binaryFormatter = new BinaryFormatter();
         }
 
         
-
         public void Send(Packet data)
         {
             MemoryStream ms = new MemoryStream();
@@ -43,11 +50,10 @@ namespace SimpleServer
             _writer.Flush();
         }
     
-        
-        
         public void Close()
         {
-            _socket.Close();
+            _tcpSocket.Close();
+            _udpSocket.Close();
         }
     }
 }
