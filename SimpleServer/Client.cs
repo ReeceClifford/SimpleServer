@@ -42,7 +42,8 @@ namespace SimpleServer
         void UDPConnect(EndPoint clientConnection)
         {
             _udpSocket.Connect(clientConnection);
-            _udpSocket.Bind(clientConnection);
+
+            
 
         }
 
@@ -59,7 +60,7 @@ namespace SimpleServer
 
             _udpSocket.Send(buffer);
         }
-        
+
         public void tcpSend(Packet data)
         {
             MemoryStream ms = new MemoryStream();

@@ -40,6 +40,7 @@ public class NickNamePacket : Packet
         this.nickName = nickName;
     }
 }
+
 //Added for UDP and TCP Task
 [Serializable]
 public class LoginPacket : Packet

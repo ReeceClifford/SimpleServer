@@ -36,16 +36,15 @@ namespace SimpleServer
                 var client = new Client(_tcpSocket);
                 clientsList.Add(client);
 
-                Thread t = new Thread(new ParameterizedThreadStart(ClientMethod));
+                Thread t = new Thread(new ParameterizedThreadStart(tcpClientMethod));
                 t.Start(client);
             };
         }
  
-        private void ClientMethod(Object clientObj)
+        private void tcpClientMethod(Object clientObj)
         {
             Client client = (Client)clientObj;
             
-
             int noOfIncomingBytes = 0;
             while ((noOfIncomingBytes = client._reader.ReadInt32()) != 0)
             {
@@ -54,6 +53,7 @@ namespace SimpleServer
 
                 ms.Write(byteData, 0, byteData.Length);
                 ms.Position = 0;
+
                 BinaryFormatter bf = new BinaryFormatter();
                 Packet packet = bf.Deserialize(ms) as Packet;
                 switch (packet.type)
@@ -71,6 +71,7 @@ namespace SimpleServer
                         NickNamePacket nicknamePacket = (NickNamePacket)packet;
                         client.nickName = nicknamePacket.nickName;
                         break;
+
                 }
             }
             clientsList.Remove(client);
@@ -81,5 +82,4 @@ namespace SimpleServer
             tcpListner.Stop();
         }
     }
-
 }

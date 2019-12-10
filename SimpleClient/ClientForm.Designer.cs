@@ -45,6 +45,7 @@
             this.btnSubmit.TabIndex = 0;
             this.btnSubmit.Text = "Submit";
             this.btnSubmit.UseVisualStyleBackColor = true;
+            this.btnSubmit.Visible = false;
             this.btnSubmit.Click += new System.EventHandler(this.BtnSubmit_Click);
             // 
             // chatRelay
@@ -62,6 +63,7 @@
             this.inputChat.Size = new System.Drawing.Size(632, 61);
             this.inputChat.TabIndex = 2;
             this.inputChat.Text = "";
+            this.inputChat.Visible = false;
             // 
             // connectDcBtn
             // 

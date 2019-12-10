@@ -31,15 +31,8 @@ namespace SimpleClient
 
         private void BtnSubmit_Click(object sender, EventArgs e)
         {
-            if (nicknameTextBox.Text != "")
-            {
                 Client.Send(new ChatMessagePacket(inputChat.Text));
                 inputChat.Text = null;
-            }
-            else
-            {
-                chatRelay.Text = "You must have a nickname to talk";
-            }
         }
 
         public void UpdateChatWindow(string message)
@@ -63,19 +56,20 @@ namespace SimpleClient
 
         private void ConnectDcBtn_Click(object sender, EventArgs e)
         {
-            if(nicknameTextBox.Text != "")
+            if(nicknameTextBox.Text != "" && connectDcBtn.Text != "Disconnect")
             {
                 chatRelay.Text = "Weclome to the Chat room\n";
                 Client.Send(new NickNamePacket(nicknameTextBox.Text));
                 nicknameLabel.Visible = false;
                 nicknameTextBox.Visible = false;
+                inputChat.Visible = true;
+                btnSubmit.Visible = true;
                 connectDcBtn.Text = "Disconnect";
             }
             else
             {
-                chatRelay.Text = "ENTER NICKNAME BEFORE YOU CONNECT";
+                Client.Stop();
             }
-
         }
     }
 }

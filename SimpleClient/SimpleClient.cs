@@ -16,6 +16,8 @@ namespace SimpleClient
     class SimpleClient
     {
         TcpClient tcpClient;
+        //Added for TCP and UDP Tutorial
+        UdpClient udpClient;
         NetworkStream stream;
         BinaryReader reader;
         BinaryWriter writer;
@@ -31,7 +33,7 @@ namespace SimpleClient
             messageForm = new ClientForm(this);
         }
 
-        public bool Connect(string ipAddress, int port)
+        public bool tcpConnect(string ipAddress, int port)
         {
             try
             {
@@ -79,6 +81,9 @@ namespace SimpleClient
                         Console.WriteLine(chatPacket.message);
                         messageForm.UpdateChatWindow(chatPacket.message);
                         break;
+                    case PacketType.LOGIN:
+                        //Logic to be Added
+                        break;
                 }
             }
         }
@@ -99,6 +104,8 @@ namespace SimpleClient
         {
             readerThread.Abort();
             tcpClient.Close();
+            udpClient.Close();
+            messageForm.Close();
         }
     }
 }
