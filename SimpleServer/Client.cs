@@ -23,7 +23,7 @@ namespace SimpleServer
         public BinaryReader _reader;
         public string nickName;
 
-        BinaryFormatter _binaryFormatter;
+        BinaryFormatter _binaryFormatter; 
 
         public Client(Socket tcpSocket)
         {
@@ -39,12 +39,20 @@ namespace SimpleServer
         }
 
         //UDP and TCP Task
-        void UDPConnect(EndPoint clientConnection)
+        public void UdpConnect(EndPoint clientConnection)
         {
             _udpSocket.Connect(clientConnection);
-
-            
-
+            Packet loginPacket = new Packet();
+            loginPacket = LoginPacket(_udpSocket.LocalEndPoint);
+            tcpSend(loginPacket);
+        }
+        //UDP and TCP Task
+        public LoginPacket LoginPacket(EndPoint endPoint)
+        {
+            LoginPacket loginPacket = new LoginPacket(endPoint);
+            loginPacket.type = PacketType.LOGIN;
+            loginPacket.endPoint = endPoint;
+            return loginPacket;
         }
 
         //UDP and TCP Task
@@ -59,6 +67,31 @@ namespace SimpleServer
             _writer.Flush();
 
             _udpSocket.Send(buffer);
+        }
+
+        //UDP and TCP Task
+        public Packet tcpRead()
+        {
+            int numberOfIncomingBytes;
+            while((numberOfIncomingBytes = _reader.ReadInt32()) != 0)
+            {
+                MemoryStream ms = new MemoryStream();
+                byte[] byteData = _reader.ReadBytes(numberOfIncomingBytes);
+                return _binaryFormatter.Deserialize(ms) as Packet;
+            }
+            return null;
+        }
+        //UDP and TCP Task
+        public Packet udpRead()
+        {
+            int numberOfIncomingBytes = 0;
+            byte[] bytes = new byte[256];
+            while ((numberOfIncomingBytes = _udpSocket.Receive(bytes)) != 0)
+            {
+                MemoryStream ms = new MemoryStream(bytes);
+                return _binaryFormatter.Deserialize(ms) as Packet;
+            }
+            return new Packet();
         }
 
         public void tcpSend(Packet data)

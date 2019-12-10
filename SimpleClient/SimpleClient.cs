@@ -81,9 +81,6 @@ namespace SimpleClient
                         Console.WriteLine(chatPacket.message);
                         messageForm.UpdateChatWindow(chatPacket.message);
                         break;
-                    case PacketType.LOGIN:
-                        //Logic to be Added
-                        break;
                 }
             }
         }
