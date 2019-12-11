@@ -84,6 +84,7 @@ namespace SimpleServer
             clientsList.Remove(client);
         }
 
+
         // Added for TCP and UDP Tasks
         private void udpClientMethod(Object clientObj)
         {
@@ -111,10 +112,20 @@ namespace SimpleServer
                     case PacketType.LOGIN:
                         LoginPacket loginPacket = (LoginPacket)updReadPacket;
                         client.UdpConnect(loginPacket.endPoint);
+                        HandlePacket(client, loginPacket.endPoint);
                         break;
                 }
             }
             clientsList.Remove(client);
+        }
+
+        //TCP and UDP Tutorial
+        private void HandlePacket(Object clientObj, EndPoint loginPacket)
+        {
+            Client client = (Client)clientObj;
+            client.UdpConnect(loginPacket);
+            Thread t = new Thread(new ParameterizedThreadStart(udpClientMethod));
+            t.Start(client);
         }
 
         public void Stop()

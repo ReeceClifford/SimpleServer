@@ -56,6 +56,12 @@ namespace SimpleServer
         }
 
         //UDP and TCP Task
+        void HandlePacket()
+        {
+            
+        }
+
+        //UDP and TCP Task
         void UDPSend(Packet packet)
         {
             MemoryStream ms = new MemoryStream();
