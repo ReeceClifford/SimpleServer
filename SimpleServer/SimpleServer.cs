@@ -31,14 +31,9 @@ namespace SimpleServer
             while (true)
             {
                 Socket _tcpSocket = tcpListner.AcceptSocket();
-               
-                
                 Console.WriteLine("Connection Established");
-
                 var client = new Client(_tcpSocket);
-
                 clientsList.Add(client);
-
                 Thread t = new Thread(new ParameterizedThreadStart(tcpClientMethod));
                 t.Start(client);
             };
@@ -47,18 +42,17 @@ namespace SimpleServer
         private void tcpClientMethod(Object clientObj)
         {
             Client client = (Client)clientObj;
-            
             int noOfIncomingBytes = 0;
             while ((noOfIncomingBytes = client._reader.ReadInt32()) != 0)
             {
-                //MemoryStream ms = new MemoryStream();
-                //byte[] byteData = client._reader.ReadBytes(noOfIncomingBytes);
+                                    //MemoryStream ms = new MemoryStream();
+                        //byte[] byteData = client._reader.ReadBytes(noOfIncomingBytes);
 
-                //ms.Write(byteData, 0, byteData.Length);
-                //ms.Position = 0;
+                        //ms.Write(byteData, 0, byteData.Length);
+                        //ms.Position = 0;
 
-                //BinaryFormatter bf = new BinaryFormatter();
-                //Packet packet = bf.Deserialize(ms) as Packet;
+                        //BinaryFormatter bf = new BinaryFormatter();
+                        //Packet packet = bf.Deserialize(ms) as Packet;Old Method before addeing call for read
                 Packet tcpReadPacket = client.tcpRead();
                 switch (tcpReadPacket.type)
                 {
@@ -84,13 +78,12 @@ namespace SimpleServer
             clientsList.Remove(client);
         }
 
-
         // Added for TCP and UDP Tasks
         private void udpClientMethod(Object clientObj)
         {
             Client client = (Client)clientObj;
-
             int noOfIncomingBytes = 0;
+
             while ((noOfIncomingBytes = client._reader.ReadInt32()) != 0)
             {
                 Packet updReadPacket = client.udpRead();
@@ -99,7 +92,7 @@ namespace SimpleServer
                     case PacketType.CHATMESSAGE:
                         ChatMessagePacket chatPack = (ChatMessagePacket)updReadPacket;
                         Console.WriteLine(chatPack.message);
-                        chatPack.message = "[ " + client.nickName + " ] " + chatPack.message;
+                        chatPack.message = "[" + client.nickName + "] " + chatPack.message;
                         for (int i = 0; i < clientsList.Count; i++)
                         {
                             clientsList[i].tcpSend(updReadPacket);
@@ -124,8 +117,8 @@ namespace SimpleServer
         {
             Client client = (Client)clientObj;
             client.UdpConnect(loginPacket);
-            Thread t = new Thread(new ParameterizedThreadStart(udpClientMethod));
-            t.Start(client);
+            Thread handlePacketThread = new Thread(new ParameterizedThreadStart(udpClientMethod));
+            handlePacketThread.Start(client);
         }
 
         public void Stop()

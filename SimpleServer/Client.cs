@@ -14,16 +14,14 @@ namespace SimpleServer
     class Client
     {
         private Socket _tcpSocket;
-
-        //UDP and TCP Task
         private Socket _udpSocket;
 
         private NetworkStream _stream;
         public BinaryWriter _writer;
         public BinaryReader _reader;
-        public string nickName;
+        public BinaryFormatter _binaryFormatter;
 
-        BinaryFormatter _binaryFormatter; 
+        public string nickName;
 
         public Client(Socket tcpSocket)
         {
@@ -46,6 +44,7 @@ namespace SimpleServer
             loginPacket = LoginPacket(_udpSocket.LocalEndPoint);
             tcpSend(loginPacket);
         }
+
         //UDP and TCP Task
         public LoginPacket LoginPacket(EndPoint endPoint)
         {
@@ -53,26 +52,6 @@ namespace SimpleServer
             loginPacket.type = PacketType.LOGIN;
             loginPacket.endPoint = endPoint;
             return loginPacket;
-        }
-
-        //UDP and TCP Task
-        void HandlePacket()
-        {
-            
-        }
-
-        //UDP and TCP Task
-        void UDPSend(Packet packet)
-        {
-            MemoryStream ms = new MemoryStream();
-            _binaryFormatter.Serialize(ms, packet);
-            byte[] buffer = ms.GetBuffer();
-
-            _writer.Write(buffer.Length);
-            _writer.Write(buffer);
-            _writer.Flush();
-
-            _udpSocket.Send(buffer);
         }
 
         //UDP and TCP Task
@@ -87,6 +66,7 @@ namespace SimpleServer
             }
             return null;
         }
+
         //UDP and TCP Task
         public Packet udpRead()
         {
@@ -110,10 +90,25 @@ namespace SimpleServer
             _writer.Write(buffer);
             _writer.Flush();
         }
-    
+
+        //UDP and TCP Task
+        void UDPSend(Packet packet)
+        {
+            MemoryStream ms = new MemoryStream();
+            _binaryFormatter.Serialize(ms, packet);
+            byte[] buffer = ms.GetBuffer();
+
+            _writer.Write(buffer.Length);
+            _writer.Write(buffer);
+            _writer.Flush();
+
+            _udpSocket.Send(buffer);
+        }
+
         public void Close()
         {
             _tcpSocket.Close();
+            _udpSocket.Close();
         }
     }
 }

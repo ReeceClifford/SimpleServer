@@ -11,9 +11,8 @@ namespace SimpleClient
         static void Main(string[] args)
         {
             SimpleClient client = new SimpleClient();
-
             client.SimpleClientMain();
-            client.tcpConnect("127.0.0.1", 4444);
+            client.TCPConnect("127.0.0.1", 4444);
             client.Run();
         }
     }

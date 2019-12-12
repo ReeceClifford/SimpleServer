@@ -39,7 +39,6 @@ namespace SimpleClient
             try
             {
                 tcpClient.Connect(ipAddress, port);
-                udpClient.Connect(ipAddress, port);
                 stream = tcpClient.GetStream();
                 reader = new BinaryReader(stream, System.Text.Encoding.UTF8);
                 writer = new BinaryWriter(stream, System.Text.Encoding.UTF8);
@@ -52,13 +51,13 @@ namespace SimpleClient
             }
             catch 
             {
-                Console.WriteLine("Error Connecting");
+                Console.WriteLine("Error Connecting TCP");
                 return false;
             }
             return true;
         }
-        // TCP And UDP Tutorial
-        bool UDPConnect(string ipAddress, int port)
+        //// TCP And UDP Tutorial - UDPConnect
+        public bool UDPConnect(string ipAddress, int port)
         {
             try
             {
@@ -101,7 +100,7 @@ namespace SimpleClient
             }
         }
 
-        public void Send(Packet data)
+        public void Send(Packet data) //Not Currently Used
         {
             MemoryStream ms = new MemoryStream();
             binaryFormatter.Serialize(ms, data);
@@ -111,7 +110,6 @@ namespace SimpleClient
             writer.Write(buffer);
             writer.Flush();
         }
-
 
         public void Stop()
         {
