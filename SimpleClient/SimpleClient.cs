@@ -62,6 +62,7 @@ namespace SimpleClient
             try
             {
                 udpClient.Connect(ipAddress, port);
+                
             }
             catch
             {
@@ -100,7 +101,7 @@ namespace SimpleClient
             }
         }
 
-        public void Send(Packet data) //Not Currently Used
+        public void Send(Packet data) 
         {
             MemoryStream ms = new MemoryStream();
             binaryFormatter.Serialize(ms, data);

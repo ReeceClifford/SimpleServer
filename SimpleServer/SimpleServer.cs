@@ -38,21 +38,20 @@ namespace SimpleServer
                 t.Start(client);
             };
         }
- 
+
         private void tcpClientMethod(Object clientObj)
         {
             Client client = (Client)clientObj;
             int noOfIncomingBytes = 0;
-            while ((noOfIncomingBytes = client._reader.ReadInt32()) != 0)
+            while (true)
             {
-                                    //MemoryStream ms = new MemoryStream();
-                        //byte[] byteData = client._reader.ReadBytes(noOfIncomingBytes);
+                //MemoryStream ms = new MemoryStream();
+                //byte[] byteData = client._reader.ReadBytes(noOfIncomingBytes);
 
-                        //ms.Write(byteData, 0, byteData.Length);
-                        //ms.Position = 0;
-
-                        //BinaryFormatter bf = new BinaryFormatter();
-                        //Packet packet = bf.Deserialize(ms) as Packet;Old Method before addeing call for read
+                //ms.Write(byteData, 0, byteData.Length);
+                //ms.Position = 0;
+                //BinaryFormatter bf = new BinaryFormatter();
+                //Packet packet = bf.Deserialize(ms) as Packet; Old Method before addeing call for read
                 Packet tcpReadPacket = client.tcpRead();
                 switch (tcpReadPacket.type)
                 {
@@ -84,7 +83,8 @@ namespace SimpleServer
             Client client = (Client)clientObj;
             int noOfIncomingBytes = 0;
 
-            while ((noOfIncomingBytes = client._reader.ReadInt32()) != 0)
+            //while ((noOfIncomingBytes = client._reader.ReadInt32()) != 0)
+            while (true)
             {
                 Packet updReadPacket = client.udpRead();
                 switch (updReadPacket.type)
@@ -117,8 +117,8 @@ namespace SimpleServer
         {
             Client client = (Client)clientObj;
             client.UdpConnect(loginPacket);
-            Thread handlePacketThread = new Thread(new ParameterizedThreadStart(udpClientMethod));
-            handlePacketThread.Start(client);
+            Thread tUdpClientMethod = new Thread(new ParameterizedThreadStart(udpClientMethod));
+            tUdpClientMethod.Start(client);
         }
 
         public void Stop()

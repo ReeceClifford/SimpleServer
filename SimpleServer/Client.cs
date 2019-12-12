@@ -60,8 +60,9 @@ namespace SimpleServer
             int numberOfIncomingBytes;
             while((numberOfIncomingBytes = _reader.ReadInt32()) != 0)
             {
-                MemoryStream ms = new MemoryStream();
+                
                 byte[] byteData = _reader.ReadBytes(numberOfIncomingBytes);
+                MemoryStream ms = new MemoryStream(byteData);
                 return _binaryFormatter.Deserialize(ms) as Packet;
             }
             return null;
