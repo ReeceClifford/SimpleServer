@@ -34,11 +34,12 @@ namespace SimpleClient
             messageForm = new ClientForm(this);
         }
 
-        public bool TCPConnect(string ipAddress, int port)
+        public bool Connect(string ipAddress, int port)
         {
             try
             {
                 tcpClient.Connect(ipAddress, port);
+                udpClient.Connect(ipAddress, port);
                 stream = tcpClient.GetStream();
                 reader = new BinaryReader(stream, System.Text.Encoding.UTF8);
                 writer = new BinaryWriter(stream, System.Text.Encoding.UTF8);
@@ -52,21 +53,6 @@ namespace SimpleClient
             catch 
             {
                 Console.WriteLine("Error Connecting TCP");
-                return false;
-            }
-            return true;
-        }
-        //// TCP And UDP Tutorial - UDPConnect
-        public bool UDPConnect(string ipAddress, int port)
-        {
-            try
-            {
-                udpClient.Connect(ipAddress, port);
-                
-            }
-            catch
-            {
-                Console.WriteLine("Error Connecting UDP");
                 return false;
             }
             return true;
