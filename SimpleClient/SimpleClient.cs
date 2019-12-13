@@ -16,8 +16,10 @@ namespace SimpleClient
     class SimpleClient
     {
         TcpClient tcpClient;
+
         //Added for TCP and UDP Tutorial
         UdpClient udpClient;
+
         NetworkStream stream;
         BinaryReader reader;
         BinaryWriter writer;
@@ -44,8 +46,9 @@ namespace SimpleClient
                 reader = new BinaryReader(stream, System.Text.Encoding.UTF8);
                 writer = new BinaryWriter(stream, System.Text.Encoding.UTF8);
                 binaryFormatter = new BinaryFormatter();
+                //Send the LoginPacket Using TCP
                 readerThread = new Thread(Listen);
-
+                
                 Application.Run(messageForm);
 
                 Console.WriteLine("Connected");
@@ -63,7 +66,7 @@ namespace SimpleClient
             readerThread.Start();
         }
 
-        private void Listen()
+        private void Listen() //Make this Again for UDP, Use use Reader instead of stream!
         {
             int numberOfIncomingBytes;
             while ((numberOfIncomingBytes = reader.ReadInt32()) != 0)
@@ -86,7 +89,7 @@ namespace SimpleClient
                 }
             }
         }
-
+        //Client will need TCPRead, TCPSend, UDPSend, UDPRead Eventually
         public void Send(Packet data) 
         {
             MemoryStream ms = new MemoryStream();

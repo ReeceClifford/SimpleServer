@@ -42,7 +42,7 @@ namespace SimpleServer
         private void tcpClientMethod(Object clientObj)
         {
             Client client = (Client)clientObj;
-            int noOfIncomingBytes = 0;
+                        //int noOfIncomingBytes = 0;
 
             //while (true)
             //{
@@ -81,34 +81,34 @@ namespace SimpleServer
         private void udpClientMethod(Object clientObj)
         {
             Client client = (Client)clientObj;
-            int noOfIncomingBytes = 0;
+                            //int noOfIncomingBytes = 0;
 
-            //while ((noOfIncomingBytes = client._reader.ReadInt32()) != 0)
-                        //while (true)
-            //{
-            //    Packet updReadPacket = client.udpRead();
-            //    switch (updReadPacket.type)
-            //    {
-            //        case PacketType.CHATMESSAGE:
-            //            ChatMessagePacket chatPack = (ChatMessagePacket)updReadPacket;
-            //            Console.WriteLine(chatPack.message);
-            //            chatPack.message = "[" + client.nickName + "] " + chatPack.message;
-            //            for (int i = 0; i < clientsList.Count; i++)
-            //            {
-            //                clientsList[i].tcpSend(updReadPacket);
-            //            }
-            //            break;
-            //        case PacketType.NICKNAME:
-            //            NickNamePacket nicknamePacket = (NickNamePacket)updReadPacket;
-            //            client.nickName = nicknamePacket.nickName;
-            //            break;
-            //        case PacketType.LOGIN:
-            //            LoginPacket loginPacket = (LoginPacket)updReadPacket;
-            //            client.UdpConnect(loginPacket.endPoint);
-            //            //HandlePacket(client, loginPacket.endPoint);
-            //            break;
-            //    }
-            //}//Old Method May Be Needed.
+                //while ((noOfIncomingBytes = client._reader.ReadInt32()) != 0)
+                            //while (true)
+                //{
+                //    Packet updReadPacket = client.udpRead();
+                //    switch (updReadPacket.type)
+                //    {
+                //        case PacketType.CHATMESSAGE:
+                //            ChatMessagePacket chatPack = (ChatMessagePacket)updReadPacket;
+                //            Console.WriteLine(chatPack.message);
+                //            chatPack.message = "[" + client.nickName + "] " + chatPack.message;
+                //            for (int i = 0; i < clientsList.Count; i++)
+                //            {
+                //                clientsList[i].tcpSend(updReadPacket);
+                //            }
+                //            break;
+                //        case PacketType.NICKNAME:
+                //            NickNamePacket nicknamePacket = (NickNamePacket)updReadPacket;
+                //            client.nickName = nicknamePacket.nickName;
+                //            break;
+                //        case PacketType.LOGIN:
+                //            LoginPacket loginPacket = (LoginPacket)updReadPacket;
+                //            client.UdpConnect(loginPacket.endPoint);
+                //            //HandlePacket(client, loginPacket.endPoint);
+                //            break;
+                //    }
+                //}//Old Method May Be Needed.//Old Method
             while (true)
             {
                 Packet udpPacketToHandle = client.udpRead();
@@ -143,6 +143,8 @@ namespace SimpleServer
                     client.UdpConnect(loginPacket.endPoint);
                     Thread tUdpClientMethod = new Thread(new ParameterizedThreadStart(udpClientMethod));
                     tUdpClientMethod.Start(client);
+                    //SEND THROUGH TCPLOGINCLIENT PORT NUMBER
+                    //THEN TCPREAD ON CLIENT SIDE, LOGIN PACKET, UDPCLIENT CONNECT THROUGH THAT SOCKET SENT
                     break;
             }
         }
