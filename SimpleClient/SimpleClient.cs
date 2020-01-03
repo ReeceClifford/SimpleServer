@@ -16,8 +16,7 @@ namespace SimpleClient
     class SimpleClient
     {
         TcpClient tcpClient;
-
-        //Added for TCP and UDP Tutorial
+        Thread tUdpClientMethod;
         UdpClient udpClient;
 
         NetworkStream stream;
@@ -46,8 +45,11 @@ namespace SimpleClient
                 reader = new BinaryReader(stream, System.Text.Encoding.UTF8);
                 writer = new BinaryWriter(stream, System.Text.Encoding.UTF8);
                 binaryFormatter = new BinaryFormatter();
-                //Send the LoginPacket Using TCP
-                readerThread = new Thread(Listen);
+                
+                Packet loginPacket = LoginPacket(udpClient.Client.LocalEndPoint);
+                TCPClientSend(loginPacket);
+
+                readerThread = new Thread(TCPServerResponse);
                 
                 Application.Run(messageForm);
 
@@ -66,7 +68,15 @@ namespace SimpleClient
             readerThread.Start();
         }
 
-        private void Listen() //Make this Again for UDP, Use use Reader instead of stream!
+        public LoginPacket LoginPacket(EndPoint endPoint)
+        {
+            LoginPacket loginPacket = new LoginPacket(endPoint);
+            loginPacket.type = PacketType.LOGIN;
+            loginPacket.endPoint = endPoint;
+            return loginPacket;
+        }
+
+        private void TCPServerResponse() 
         {
             int numberOfIncomingBytes;
             while ((numberOfIncomingBytes = reader.ReadInt32()) != 0)
@@ -86,11 +96,41 @@ namespace SimpleClient
                         Console.WriteLine(chatPacket.message);
                         messageForm.UpdateChatWindow(chatPacket.message);
                         break;
+                    case PacketType.LOGIN:
+                        Console.WriteLine("Login packet Created");
+                        LoginPacket tcpLoginPacket = (LoginPacket)packet;
+                        udpClient.Client.Connect(tcpLoginPacket.endPoint);
+                        tUdpClientMethod = new Thread(UDPServerResponse);
+                        tUdpClientMethod.Start();
+                        break;
                 }
             }
         }
-        //Client will need TCPRead, TCPSend, UDPSend, UDPRead Eventually
-        public void Send(Packet data) 
+
+        private void UDPServerResponse() 
+        {
+            try
+            {
+                while(true)
+                {
+                    Packet readPacket = udpClientRead();
+                    switch (readPacket.type)
+                    {
+                        case PacketType.CHATMESSAGE:
+                            ChatMessagePacket chatPacket = (ChatMessagePacket)readPacket;
+                            Console.WriteLine(chatPacket.message);
+                            messageForm.UpdateChatWindow(chatPacket.message);
+                            break;
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                
+            }
+        }
+
+        public void TCPClientSend(Packet data) 
         {
             MemoryStream ms = new MemoryStream();
             binaryFormatter.Serialize(ms, data);
@@ -99,6 +139,25 @@ namespace SimpleClient
             writer.Write(buffer.Length);
             writer.Write(buffer);
             writer.Flush();
+        }
+
+       public void UDPClientSend(Packet packet)
+        {
+            Console.WriteLine("UDPClientSend Called");
+            MemoryStream ms = new MemoryStream();
+            binaryFormatter.Serialize(ms, packet);
+            byte[] buffer = ms.GetBuffer();
+
+            udpClient.Send(buffer, buffer.Length);
+        }
+
+        public Packet udpClientRead()
+        {
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 4444);
+            byte[] bytes = new byte[256];
+            bytes = udpClient.Receive(ref endPoint);
+            MemoryStream ms = new MemoryStream(bytes);
+            return binaryFormatter.Deserialize(ms) as Packet;
         }
 
         public void Stop()

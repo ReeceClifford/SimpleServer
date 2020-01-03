@@ -27,7 +27,7 @@ namespace SimpleServer
         {
             _tcpSocket = tcpSocket;
 
-            //UDP and TCP Task
+            //TCP - UDP Tutorial
             _udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
             _stream = new NetworkStream(_tcpSocket);
@@ -36,7 +36,7 @@ namespace SimpleServer
             _binaryFormatter = new BinaryFormatter();
         }
 
-        //UDP and TCP Task
+        //TCP - UDP Tutorial
         public void UdpConnect(EndPoint clientConnection)
         {
             _udpSocket.Connect(clientConnection);
@@ -45,7 +45,7 @@ namespace SimpleServer
             tcpSend(loginPacket);
         }
 
-        //UDP and TCP Task
+        //TCP - UDP Tutorial
         public LoginPacket LoginPacket(EndPoint endPoint)
         {
             LoginPacket loginPacket = new LoginPacket(endPoint);
@@ -54,7 +54,7 @@ namespace SimpleServer
             return loginPacket;
         }
 
-        //UDP and TCP Task
+        //TCP - UDP Tutorial
         public Packet tcpRead()
         {
             int numberOfIncomingBytes;
@@ -67,7 +67,7 @@ namespace SimpleServer
             return null;
         }
 
-        //UDP and TCP Task
+        //TCP - UDP Tutorial
         public Packet udpRead()
         {
             int numberOfIncomingBytes = 0;
@@ -80,6 +80,7 @@ namespace SimpleServer
             return new Packet();
         }
 
+        //TCP - UDP Tutorial
         public void tcpSend(Packet data)
         {
             MemoryStream ms = new MemoryStream();
@@ -91,16 +92,12 @@ namespace SimpleServer
             _writer.Flush();
         }
 
-        //UDP and TCP Task
+        //TCP - UDP Tutorial
         void UDPSend(Packet packet)
         {
             MemoryStream ms = new MemoryStream();
             _binaryFormatter.Serialize(ms, packet);
             byte[] buffer = ms.GetBuffer();
-
-            _writer.Write(buffer.Length);
-            _writer.Write(buffer);
-            _writer.Flush();
 
             _udpSocket.Send(buffer);
         }

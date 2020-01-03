@@ -31,8 +31,10 @@ namespace SimpleClient
 
         private void BtnSubmit_Click(object sender, EventArgs e)
         {
-                Client.Send(new ChatMessagePacket(inputChat.Text));
-                inputChat.Text = null;
+               // Client.TCPClientSend(new ChatMessagePacket(inputChat.Text));
+            Client.UDPClientSend(new ChatMessagePacket(inputChat.Text));
+         
+            inputChat.Text = null;
         }
 
         public void UpdateChatWindow(string message)
@@ -59,7 +61,7 @@ namespace SimpleClient
             if(nicknameTextBox.Text != "" && connectDcBtn.Text != "Disconnect")
             {
                 chatRelay.Text = "Weclome to the Chat room\n";
-                Client.Send(new NickNamePacket(nicknameTextBox.Text));
+                Client.TCPClientSend(new NickNamePacket(nicknameTextBox.Text));
                 nicknameLabel.Visible = false;
                 nicknameTextBox.Visible = false;
                 inputChat.Visible = true;
