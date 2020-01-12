@@ -14,12 +14,17 @@ namespace SimpleClient
     {
         delegate void UpdateChatWindowDelegate(string message);
         UpdateChatWindowDelegate _updateChatWindowDelegate;
+
+        delegate void UpdateConnectedClientsDelegate(List<string> nickname);
+        UpdateConnectedClientsDelegate _updateConnectedClientsDelegate;
+
         SimpleClient Client;
 
         public ClientForm(object _client)
         {
             InitializeComponent();
             _updateChatWindowDelegate = new UpdateChatWindowDelegate(UpdateChatWindow);
+            _updateConnectedClientsDelegate = new UpdateConnectedClientsDelegate(UpdateClientList);
             Client = (SimpleClient) _client;
             inputChat.Select();
         }
@@ -31,9 +36,7 @@ namespace SimpleClient
 
         private void BtnSubmit_Click(object sender, EventArgs e)
         {
-               // Client.TCPClientSend(new ChatMessagePacket(inputChat.Text));
-            Client.UDPClientSend(new ChatMessagePacket(inputChat.Text));
-         
+            Client.TCPClientSend(new ChatMessagePacket(inputChat.Text));
             inputChat.Text = null;
         }
 
@@ -50,7 +53,24 @@ namespace SimpleClient
                 chatRelay.ScrollToCaret();
             }
         }
-
+        public void UpdateClientList(List<string> nickname)
+        {
+            if (activeClientList.InvokeRequired)
+            {
+                Invoke(_updateConnectedClientsDelegate, nickname);
+            }
+            else
+            {
+                activeClientList.Text = null;
+                for(int i = 0; i < nickname.Count; i++)
+                {
+                    Console.WriteLine("Nickname before writing to client list is " + nickname);
+                    activeClientList.Text += nickname[i] + "\n";
+                    activeClientList.SelectionStart = activeClientList.Text.Length;
+                    activeClientList.ScrollToCaret();
+                }
+            }
+        }
         private void ClientForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             Client.Stop();
@@ -67,6 +87,7 @@ namespace SimpleClient
                 inputChat.Visible = true;
                 btnSubmit.Visible = true;
                 connectDcBtn.Text = "Disconnect";
+
             }
             else
             {

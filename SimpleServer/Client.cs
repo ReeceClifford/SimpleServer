@@ -21,13 +21,17 @@ namespace SimpleServer
         public BinaryReader _reader;
         public BinaryFormatter _binaryFormatter;
 
+        
+
         public string nickName;
+
+        public bool tcpConnect;
+        public bool udpConnect;
 
         public Client(Socket tcpSocket)
         {
             _tcpSocket = tcpSocket;
 
-            //TCP - UDP Tutorial
             _udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
             _stream = new NetworkStream(_tcpSocket);
@@ -36,16 +40,15 @@ namespace SimpleServer
             _binaryFormatter = new BinaryFormatter();
         }
 
-        //TCP - UDP Tutorial
         public void UdpConnect(EndPoint clientConnection)
         {
             _udpSocket.Connect(clientConnection);
             Packet loginPacket = new Packet();
             loginPacket = LoginPacket(_udpSocket.LocalEndPoint);
             tcpSend(loginPacket);
+            udpConnect = true;
         }
 
-        //TCP - UDP Tutorial
         public LoginPacket LoginPacket(EndPoint endPoint)
         {
             LoginPacket loginPacket = new LoginPacket(endPoint);
@@ -54,20 +57,23 @@ namespace SimpleServer
             return loginPacket;
         }
 
-        //TCP - UDP Tutorial
         public Packet tcpRead()
         {
-            int numberOfIncomingBytes;
-            while((numberOfIncomingBytes = _reader.ReadInt32()) != 0)
+            int numberOfIncomingBytes = 0;
+            while (tcpConnect)
             {
-                byte[] byteData = _reader.ReadBytes(numberOfIncomingBytes);
-                MemoryStream ms = new MemoryStream(byteData);
-                return _binaryFormatter.Deserialize(ms) as Packet;
+                while ((numberOfIncomingBytes = _reader.ReadInt32()) != 0)
+                {
+                    byte[] byteData = _reader.ReadBytes(numberOfIncomingBytes);
+                    MemoryStream ms = new MemoryStream();
+                    ms.Write(byteData, 0, byteData.Length);
+                    ms.Position = 0;
+                    return _binaryFormatter.Deserialize(ms) as Packet;
+                }
             }
-            return null;
+            return new Packet();
         }
 
-        //TCP - UDP Tutorial
         public Packet udpRead()
         {
             int numberOfIncomingBytes = 0;
@@ -80,7 +86,6 @@ namespace SimpleServer
             return new Packet();
         }
 
-        //TCP - UDP Tutorial
         public void tcpSend(Packet data)
         {
             MemoryStream ms = new MemoryStream();
@@ -92,8 +97,7 @@ namespace SimpleServer
             _writer.Flush();
         }
 
-        //TCP - UDP Tutorial
-        void UDPSend(Packet packet)
+       public void UDPSend(Packet packet)
         {
             MemoryStream ms = new MemoryStream();
             _binaryFormatter.Serialize(ms, packet);

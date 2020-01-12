@@ -11,6 +11,7 @@ public enum PacketType
     CHATMESSAGE,
     NICKNAME,
     LOGIN,
+    CLIENTSCONNECTED,
 }
 
 [Serializable]
@@ -29,11 +30,23 @@ public class ChatMessagePacket : Packet
         this.message = message;
     }
 }
+[Serializable]
+public class ConnectedNicknames : Packet
+{
+    public List<string> nicknamesConnected;
+
+    public ConnectedNicknames(List<string> nicknamesConnected)
+    {
+        this.type = PacketType.CLIENTSCONNECTED;
+        this.nicknamesConnected = nicknamesConnected;
+    }
+
+}
 
 [Serializable]
 public class NickNamePacket : Packet
 {
-    public string nickName = String.Empty;
+    public string nickName;
     public NickNamePacket(string nickName)
     {
         this.type = PacketType.NICKNAME;

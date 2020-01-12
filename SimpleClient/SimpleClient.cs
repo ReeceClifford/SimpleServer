@@ -28,6 +28,9 @@ namespace SimpleClient
 
         public object _clients { get; private set; }
 
+        bool tcpClientConnect;
+        bool udpClientConnect;
+
         public void SimpleClientMain()
         {
             tcpClient = new TcpClient();
@@ -45,7 +48,8 @@ namespace SimpleClient
                 reader = new BinaryReader(stream, System.Text.Encoding.UTF8);
                 writer = new BinaryWriter(stream, System.Text.Encoding.UTF8);
                 binaryFormatter = new BinaryFormatter();
-                
+                tcpClientConnect = true;
+
                 Packet loginPacket = LoginPacket(udpClient.Client.LocalEndPoint);
                 TCPClientSend(loginPacket);
 
@@ -78,31 +82,36 @@ namespace SimpleClient
 
         private void TCPServerResponse() 
         {
-            int numberOfIncomingBytes;
-            while ((numberOfIncomingBytes = reader.ReadInt32()) != 0)
+            while (tcpClientConnect)
             {
-                MemoryStream ms = new MemoryStream();
-                byte[] byteData = reader.ReadBytes(numberOfIncomingBytes);
-
-                ms.Write(byteData, 0, byteData.Length);
-                ms.Position = 0;
-                
-                Packet packet = binaryFormatter.Deserialize(ms) as Packet;
-                Console.WriteLine("Packet Deserialized");
-                switch (packet.type)
+                int numberOfIncomingBytes;
+                while ((numberOfIncomingBytes = reader.ReadInt32()) != 0)
                 {
-                    case PacketType.CHATMESSAGE:
-                        ChatMessagePacket chatPacket = (ChatMessagePacket)packet;
-                        Console.WriteLine(chatPacket.message);
-                        messageForm.UpdateChatWindow(chatPacket.message);
-                        break;
-                    case PacketType.LOGIN:
-                        Console.WriteLine("Login packet Created");
-                        LoginPacket tcpLoginPacket = (LoginPacket)packet;
-                        udpClient.Client.Connect(tcpLoginPacket.endPoint);
-                        tUdpClientMethod = new Thread(UDPServerResponse);
-                        tUdpClientMethod.Start();
-                        break;
+                    MemoryStream ms = new MemoryStream();
+                    byte[] byteData = reader.ReadBytes(numberOfIncomingBytes);
+
+                    ms.Write(byteData, 0, byteData.Length);
+                    ms.Position = 0;
+
+                    Packet packet = binaryFormatter.Deserialize(ms) as Packet;
+                    Console.WriteLine("Packet Deserialized");
+                    switch (packet.type)
+                    {
+                        case PacketType.CHATMESSAGE:
+                            ChatMessagePacket chatPacket = (ChatMessagePacket)packet;
+                            Console.WriteLine(chatPacket.message);
+                            messageForm.UpdateChatWindow(chatPacket.message);
+                            break;
+                        case PacketType.LOGIN:
+                            Console.WriteLine("Login packet Created");
+                            LoginPacket tcpLoginPacket = (LoginPacket)packet;
+                            udpClient.Client.Connect(tcpLoginPacket.endPoint);
+                            tUdpClientMethod = new Thread(UDPServerResponse);
+                            tUdpClientMethod.Start();
+                            udpClientConnect = true;
+                            break;
+
+                    }
                 }
             }
         }
@@ -111,15 +120,20 @@ namespace SimpleClient
         {
             try
             {
-                while(true)
+                while(udpClientConnect)
                 {
-                    Packet readPacket = udpClientRead();
-                    switch (readPacket.type)
+                    Packet udpReadPacket = udpClientRead();
+                    switch (udpReadPacket.type)
                     {
-                        case PacketType.CHATMESSAGE:
-                            ChatMessagePacket chatPacket = (ChatMessagePacket)readPacket;
-                            Console.WriteLine(chatPacket.message);
-                            messageForm.UpdateChatWindow(chatPacket.message);
+                        //case PacketType.NICKNAME:
+                        //    NickNamePacket nicknamePacket = (NickNamePacket)udpReadPacket;
+                        //    Console.WriteLine(nicknamePacket.nickName);
+                        //    messageForm.UpdateClientList(nicknamePacket.nickName);
+                        //    break;
+                        case PacketType.CLIENTSCONNECTED:
+                            ConnectedNicknames connectedNicknamePack = (ConnectedNicknames)udpReadPacket;
+                            Console.WriteLine(connectedNicknamePack.nicknamesConnected);
+                            messageForm.UpdateClientList(connectedNicknamePack.nicknamesConnected);
                             break;
                     }
                 }
