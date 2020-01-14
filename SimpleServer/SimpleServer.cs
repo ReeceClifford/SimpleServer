@@ -48,12 +48,19 @@ namespace SimpleServer
         {
             Client client = (Client)clientObj;
             client.tcpConnect = true;
-
-            while (client.tcpConnect)
+            try
+            {
+                while (client.tcpConnect)
             {
                 Packet tcpPacketToHandle = client.tcpRead();
                 HandlePacket(client, tcpPacketToHandle);
             }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("TCP Read Error " + e.Message);
+            }
+            client.Close();
             clientsList.Remove(client);
         }
 
@@ -69,13 +76,20 @@ namespace SimpleServer
                 clientListTimer.AutoReset = true;
                 clientListTimer.Elapsed += (sender, e) => Timer_Elapsed(sender, e, client);
                 clientListTimer.Start();
-            
 
-            while (client.udpConnect)
+            try
             {
-                Packet udpPacketToHandle = client.udpRead();
-                Console.WriteLine("Hits udpClientMethod");
-                HandlePacket(client, udpPacketToHandle);
+                while (client.udpConnect)
+                {
+                    Packet udpPacketToHandle = client.udpRead();
+                    Console.WriteLine("Hits udpClientMethod");
+                    HandlePacket(client, udpPacketToHandle);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("UDP Read Error " + e.Message);
+
             }
             clientsList.Remove(client);
         }
@@ -137,8 +151,29 @@ namespace SimpleServer
                     tUdpClientMethod = new Thread(udpClientMethod);
                     tUdpClientMethod.Start(client);
                     break;
+                case PacketType.DISCONNECT:
+                    DisconnectPacket disconnectPack = (DisconnectPacket)packetToHandle;
+                    Console.WriteLine("Disconnect Client " + disconnectPack.disconnectNickname);
+                    clientsList.Remove(client);
+                    //for (int i = 0; i < clientsList.Count; i++)
+                    //{
+                    //    if(disconnectPack.disconnectNickname == clientsList[i].nickName)
+                    //    {
+                    //        clientsList[i].nickName = null;
+                    //        clientsList.Remove(clientsList[i]);
+                    //        nickNameList.RemoveAll(disconnectPack.disconnectNickname);
+                    //        PushClientList();
+                    //    }  
+                    //}
+                    break;
             }
         }
+
+        //public void RemoveClientFromList(object clientObj, List<Client>[] clientList, List<string>[]nickNames, char clientListPos, char nickNamelistPos)
+        //{
+        //    Client client = (Client)clientObj;
+        //    clientList[clientListPos].Remove(client);
+        //}
 
         public void Stop()
         {

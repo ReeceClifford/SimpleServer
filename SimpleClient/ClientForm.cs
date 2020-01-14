@@ -91,6 +91,7 @@ namespace SimpleClient
             }
             else
             {
+                Client.UDPClientSend(new DisconnectPacket(nicknameTextBox.Text));
                 Client.Stop();
             }
         }

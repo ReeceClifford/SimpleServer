@@ -35,6 +35,7 @@
             this.nicknameTextBox = new System.Windows.Forms.RichTextBox();
             this.nicknameLabel = new System.Windows.Forms.Label();
             this.activeClientList = new System.Windows.Forms.RichTextBox();
+            this.listBox1 = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // btnSubmit
@@ -102,11 +103,20 @@
             this.activeClientList.TabIndex = 8;
             this.activeClientList.Text = "";
             // 
+            // listBox1
+            // 
+            this.listBox1.FormattingEnabled = true;
+            this.listBox1.Location = new System.Drawing.Point(581, 190);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.Size = new System.Drawing.Size(120, 95);
+            this.listBox1.TabIndex = 9;
+            // 
             // ClientForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1016, 573);
+            this.Controls.Add(this.listBox1);
             this.Controls.Add(this.activeClientList);
             this.Controls.Add(this.nicknameLabel);
             this.Controls.Add(this.nicknameTextBox);
@@ -132,5 +142,6 @@
         private System.Windows.Forms.RichTextBox nicknameTextBox;
         private System.Windows.Forms.Label nicknameLabel;
         private System.Windows.Forms.RichTextBox activeClientList;
+        private System.Windows.Forms.ListBox listBox1;
     }
 }

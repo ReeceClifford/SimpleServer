@@ -33,8 +33,6 @@ namespace SimpleClient
 
         public void SimpleClientMain()
         {
-            tcpClient = new TcpClient();
-            udpClient = new UdpClient();
             messageForm = new ClientForm(this);
         }
 
@@ -42,6 +40,8 @@ namespace SimpleClient
         {
             try
             {
+                tcpClient = new TcpClient();
+                udpClient = new UdpClient();
                 tcpClient.Connect(ipAddress, port);
                 udpClient.Connect(ipAddress, port);
                 stream = tcpClient.GetStream();
@@ -69,7 +69,15 @@ namespace SimpleClient
 
         public void Run()
         {
-            readerThread.Start();
+            try
+            {
+                readerThread.Start();
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Error " + e.Message);
+            }
+
         }
 
         public LoginPacket LoginPacket(EndPoint endPoint)
@@ -179,7 +187,8 @@ namespace SimpleClient
             readerThread.Abort();
             tcpClient.Close();
             udpClient.Close();
-            messageForm.Close();
+         
+            //messageForm.Close();
         }
     }
 }

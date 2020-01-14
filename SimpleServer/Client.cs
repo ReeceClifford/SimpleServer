@@ -21,8 +21,6 @@ namespace SimpleServer
         public BinaryReader _reader;
         public BinaryFormatter _binaryFormatter;
 
-        
-
         public string nickName;
 
         public bool tcpConnect;
@@ -60,22 +58,22 @@ namespace SimpleServer
         public Packet tcpRead()
         {
             int numberOfIncomingBytes = 0;
-            while (tcpConnect)
+
+            while ((numberOfIncomingBytes = _reader.ReadInt32()) != 0)
             {
-                while ((numberOfIncomingBytes = _reader.ReadInt32()) != 0)
-                {
-                    byte[] byteData = _reader.ReadBytes(numberOfIncomingBytes);
-                    MemoryStream ms = new MemoryStream();
-                    ms.Write(byteData, 0, byteData.Length);
-                    ms.Position = 0;
-                    return _binaryFormatter.Deserialize(ms) as Packet;
-                }
+                byte[] byteData = _reader.ReadBytes(numberOfIncomingBytes);
+                MemoryStream ms = new MemoryStream();
+                ms.Write(byteData, 0, byteData.Length);
+                ms.Position = 0;
+                return _binaryFormatter.Deserialize(ms) as Packet;
             }
+
             return new Packet();
         }
 
         public Packet udpRead()
         {
+
             int numberOfIncomingBytes = 0;
             byte[] bytes = new byte[256];
             while ((numberOfIncomingBytes = _udpSocket.Receive(bytes)) != 0)
@@ -83,6 +81,7 @@ namespace SimpleServer
                 MemoryStream ms = new MemoryStream(bytes);
                 return _binaryFormatter.Deserialize(ms) as Packet;
             }
+
             return new Packet();
         }
 
