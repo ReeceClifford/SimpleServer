@@ -115,7 +115,7 @@ namespace SimpleServer
                 case PacketType.CHATMESSAGE:
                     ChatMessagePacket chatPack = (ChatMessagePacket)packetToHandle;
                     Console.WriteLine(chatPack.message);
-                    chatPack.message = "[" + client.nickName + "] " + chatPack.message;
+                    chatPack.message = "[" + client.nickName + "] " + string.Format("{0:HH:mm:ss tt}", DateTime.Now) +  " " +chatPack.message;
                     for (int i = 0; i < clientsList.Count; i++)
                     {
                         clientsList[i].tcpSend(chatPack);

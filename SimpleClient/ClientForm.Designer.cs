@@ -52,6 +52,7 @@
             // 
             this.chatRelay.Location = new System.Drawing.Point(12, 52);
             this.chatRelay.Name = "chatRelay";
+            this.chatRelay.ReadOnly = true;
             this.chatRelay.Size = new System.Drawing.Size(846, 441);
             this.chatRelay.TabIndex = 3;
             this.chatRelay.Text = "";
@@ -96,6 +97,7 @@
             // 
             this.activeClientList.Location = new System.Drawing.Point(864, 52);
             this.activeClientList.Name = "activeClientList";
+            this.activeClientList.ReadOnly = true;
             this.activeClientList.Size = new System.Drawing.Size(140, 441);
             this.activeClientList.TabIndex = 8;
             this.activeClientList.Text = "";
