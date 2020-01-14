@@ -31,11 +31,11 @@
             this.btnSubmit = new System.Windows.Forms.Button();
             this.chatRelay = new System.Windows.Forms.RichTextBox();
             this.inputChat = new System.Windows.Forms.RichTextBox();
-            this.connectDcBtn = new System.Windows.Forms.Button();
+            this.connectButton = new System.Windows.Forms.Button();
             this.nicknameTextBox = new System.Windows.Forms.RichTextBox();
             this.nicknameLabel = new System.Windows.Forms.Label();
-            this.activeClientList = new System.Windows.Forms.RichTextBox();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.clientConnectLB = new System.Windows.Forms.ListBox();
+            this.disconnectButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnSubmit
@@ -67,15 +67,15 @@
             this.inputChat.Text = "";
             this.inputChat.Visible = false;
             // 
-            // connectDcBtn
+            // connectButton
             // 
-            this.connectDcBtn.Location = new System.Drawing.Point(13, 5);
-            this.connectDcBtn.Name = "connectDcBtn";
-            this.connectDcBtn.Size = new System.Drawing.Size(107, 41);
-            this.connectDcBtn.TabIndex = 4;
-            this.connectDcBtn.Text = "Connect";
-            this.connectDcBtn.UseVisualStyleBackColor = true;
-            this.connectDcBtn.Click += new System.EventHandler(this.ConnectDcBtn_Click);
+            this.connectButton.Location = new System.Drawing.Point(13, 5);
+            this.connectButton.Name = "connectButton";
+            this.connectButton.Size = new System.Drawing.Size(107, 41);
+            this.connectButton.TabIndex = 4;
+            this.connectButton.Text = "Connect";
+            this.connectButton.UseVisualStyleBackColor = true;
+            this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
             // 
             // nicknameTextBox
             // 
@@ -94,33 +94,34 @@
             this.nicknameLabel.TabIndex = 7;
             this.nicknameLabel.Text = "Enter Desired Nickname";
             // 
-            // activeClientList
+            // clientConnectLB
             // 
-            this.activeClientList.Location = new System.Drawing.Point(864, 52);
-            this.activeClientList.Name = "activeClientList";
-            this.activeClientList.ReadOnly = true;
-            this.activeClientList.Size = new System.Drawing.Size(140, 441);
-            this.activeClientList.TabIndex = 8;
-            this.activeClientList.Text = "";
+            this.clientConnectLB.FormattingEnabled = true;
+            this.clientConnectLB.Location = new System.Drawing.Point(864, 52);
+            this.clientConnectLB.Name = "clientConnectLB";
+            this.clientConnectLB.Size = new System.Drawing.Size(140, 446);
+            this.clientConnectLB.TabIndex = 9;
             // 
-            // listBox1
+            // disconnectButton
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(581, 190);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(120, 95);
-            this.listBox1.TabIndex = 9;
+            this.disconnectButton.Location = new System.Drawing.Point(864, 5);
+            this.disconnectButton.Name = "disconnectButton";
+            this.disconnectButton.Size = new System.Drawing.Size(140, 41);
+            this.disconnectButton.TabIndex = 10;
+            this.disconnectButton.Text = "Disconnect";
+            this.disconnectButton.UseVisualStyleBackColor = true;
+            this.disconnectButton.Click += new System.EventHandler(this.disconnectButton_Click);
             // 
             // ClientForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1016, 573);
-            this.Controls.Add(this.listBox1);
-            this.Controls.Add(this.activeClientList);
+            this.Controls.Add(this.disconnectButton);
+            this.Controls.Add(this.clientConnectLB);
             this.Controls.Add(this.nicknameLabel);
             this.Controls.Add(this.nicknameTextBox);
-            this.Controls.Add(this.connectDcBtn);
+            this.Controls.Add(this.connectButton);
             this.Controls.Add(this.inputChat);
             this.Controls.Add(this.chatRelay);
             this.Controls.Add(this.btnSubmit);
@@ -138,10 +139,10 @@
         private System.Windows.Forms.Button btnSubmit;
         private System.Windows.Forms.RichTextBox chatRelay;
         private System.Windows.Forms.RichTextBox inputChat;
-        private System.Windows.Forms.Button connectDcBtn;
+        private System.Windows.Forms.Button connectButton;
         private System.Windows.Forms.RichTextBox nicknameTextBox;
         private System.Windows.Forms.Label nicknameLabel;
-        private System.Windows.Forms.RichTextBox activeClientList;
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox clientConnectLB;
+        private System.Windows.Forms.Button disconnectButton;
     }
 }

@@ -13,6 +13,8 @@ public enum PacketType
     LOGIN,
     CLIENTSCONNECTED,
     DISCONNECT,
+    CLEARCONNECTEDLIST,
+    DISCONNECTEDCLIENT,
 }
 
 [Serializable]
@@ -31,10 +33,12 @@ public class ChatMessagePacket : Packet
         this.message = message;
     }
 }
+
 [Serializable]
 public class ConnectedNicknames : Packet
 {
-    public ConnectedNicknames(List<> nicknamesConnected)
+    public string nicknamesConnected;
+    public ConnectedNicknames(string nicknamesConnected)
     {
         this.type = PacketType.CLIENTSCONNECTED;
         this.nicknamesConnected = nicknamesConnected;
@@ -52,14 +56,24 @@ public class NickNamePacket : Packet
     }
 }
 
+//public class DisconnectedNicknames : Packet
+//{
+//    public string disconnectedNickname;
+//    public DisconnectedNicknames(string disconnectedNickname)
+//    {
+//        this.type = PacketType.CLIENTSCONNECTED;
+//        this.disconnectedNickname = disconnectedNickname;
+//    }
+//}
+
 [Serializable]
 public class DisconnectPacket : Packet
 {
-    public string disconnectNickname;
-    public DisconnectPacket(string disconnectNickname)
+    public bool clientDisconnect;
+    public DisconnectPacket(bool clientDiscconnect)
     {
         this.type = PacketType.DISCONNECT;
-        this.disconnectNickname = disconnectNickname;
+        this.clientDisconnect = true;
     }
 }
 

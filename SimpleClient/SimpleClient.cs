@@ -139,10 +139,16 @@ namespace SimpleClient
                         //    messageForm.UpdateClientList(nicknamePacket.nickName);
                         //    break;
                         case PacketType.CLIENTSCONNECTED:
+                           
                             ConnectedNicknames connectedNicknamePack = (ConnectedNicknames)udpReadPacket;
-                            Console.WriteLine(connectedNicknamePack.nicknamesConnected);
-                            messageForm.UpdateClientList(connectedNicknamePack.nicknamesConnected);
+                            Console.WriteLine("Clients connected are " + connectedNicknamePack.nicknamesConnected);
+                            messageForm.UpdateClientListBox(connectedNicknamePack.nicknamesConnected);
                             break;
+                        //case PacketType.DISCONNECTEDCLIENT:
+                        //    DisconnectedNicknames disconnectedNicknames = (DisconnectedNicknames)udpReadPacket;
+                        //    messageForm.ClearUpdateClientListBox(disconnectedNicknames.disconnectedNickname);
+
+                        //    break;
                     }
                 }
             }
@@ -165,7 +171,6 @@ namespace SimpleClient
 
        public void UDPClientSend(Packet packet)
         {
-            Console.WriteLine("UDPClientSend Called");
             MemoryStream ms = new MemoryStream();
             binaryFormatter.Serialize(ms, packet);
             byte[] buffer = ms.GetBuffer();

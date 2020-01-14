@@ -17,14 +17,14 @@ namespace SimpleServer
     {
         TcpListener tcpListner;
         List<Client> clientsList;
-        List<string> nickNameList;
+
         Thread tUdpClientMethod;
         public void Server(string ipAddress, int port)
         {
             IPAddress ip = IPAddress.Parse(ipAddress);
             tcpListner = new TcpListener(ip, port);
             clientsList = new List<Client>();
-            nickNameList = new List<string>();
+           
         }
 
         public void Start()
@@ -70,12 +70,12 @@ namespace SimpleServer
 
             Client client = (Client)clientObj;
 
-        
-            
-                System.Timers.Timer clientListTimer = new System.Timers.Timer((5 * 1000));
-                clientListTimer.AutoReset = true;
-                clientListTimer.Elapsed += (sender, e) => Timer_Elapsed(sender, e, client);
-                clientListTimer.Start();
+
+
+            System.Timers.Timer clientListTimer = new System.Timers.Timer((5 * 1000));
+            clientListTimer.AutoReset = true;
+            clientListTimer.Elapsed += (sender, e) => Timer_Elapsed(sender, e, client);
+            clientListTimer.Start();
 
             try
             {
@@ -96,21 +96,23 @@ namespace SimpleServer
 
         private void Timer_Elapsed(object sender, EventArgs e, object clientObj)
         {
-            PushClientList();
+            PushClientList(clientObj);
         }
 
-        public void PushClientList()
+        public void PushClientList(object clientObj)
         {
-            Packet connectedNicksPack = new Packet();
-            connectedNicksPack = ConnectedNicknames(nickNameList);
+            Client client = (Client)clientObj;
 
-            for(int i = 0; i < clientsList.Count; i++)
+            Packet connectedNicksPack = new Packet();
+            connectedNicksPack = ConnectedNicknames(client.nickName);
+
+            for (int i = 0; i < clientsList.Count; i++)
             {
                 clientsList[i].UDPSend(connectedNicksPack);
             }
         }
 
-        public ConnectedNicknames ConnectedNicknames(List<string> nicknames)
+        public ConnectedNicknames ConnectedNicknames(string nicknames)
         {
             ConnectedNicknames connectedNicksPack = new ConnectedNicknames(nicknames);
             connectedNicksPack.nicknamesConnected = nicknames;
@@ -138,11 +140,11 @@ namespace SimpleServer
                 case PacketType.NICKNAME:
                     NickNamePacket nicknamePacket = (NickNamePacket)packetToHandle;
                     client.nickName = nicknamePacket.nickName;
-                    nickNameList.Add(nicknamePacket.nickName);
                     for (int i = 0; i < clientsList.Count; i++)
                     {
                         clientsList[i].UDPSend(nicknamePacket);
                     }
+                    PushClientList(clientObj);
                     break;
                 case PacketType.LOGIN:
                     Console.WriteLine("Login packet Created");
@@ -150,30 +152,21 @@ namespace SimpleServer
                     client.UdpConnect(loginPacket.endPoint);
                     tUdpClientMethod = new Thread(udpClientMethod);
                     tUdpClientMethod.Start(client);
+
                     break;
                 case PacketType.DISCONNECT:
                     DisconnectPacket disconnectPack = (DisconnectPacket)packetToHandle;
-                    Console.WriteLine("Disconnect Client " + disconnectPack.disconnectNickname);
-                    clientsList.Remove(client);
-                    //for (int i = 0; i < clientsList.Count; i++)
-                    //{
-                    //    if(disconnectPack.disconnectNickname == clientsList[i].nickName)
-                    //    {
-                    //        clientsList[i].nickName = null;
-                    //        clientsList.Remove(clientsList[i]);
-                    //        nickNameList.RemoveAll(disconnectPack.disconnectNickname);
-                    //        PushClientList();
-                    //    }  
-                    //}
+                    Console.WriteLine("Disconnect Client " + disconnectPack.clientDisconnect);
+                    if(disconnectPack.clientDisconnect)
+                    {
+                        client.nickName = string.Empty;
+                    }
                     break;
+
             }
         }
 
-        //public void RemoveClientFromList(object clientObj, List<Client>[] clientList, List<string>[]nickNames, char clientListPos, char nickNamelistPos)
-        //{
-        //    Client client = (Client)clientObj;
-        //    clientList[clientListPos].Remove(client);
-        //}
+   
 
         public void Stop()
         {

@@ -15,7 +15,7 @@ namespace SimpleClient
         delegate void UpdateChatWindowDelegate(string message);
         UpdateChatWindowDelegate _updateChatWindowDelegate;
 
-        delegate void UpdateConnectedClientsDelegate(List<string> nickname);
+        delegate void UpdateConnectedClientsDelegate(string nicknames);
         UpdateConnectedClientsDelegate _updateConnectedClientsDelegate;
 
         SimpleClient Client;
@@ -24,8 +24,8 @@ namespace SimpleClient
         {
             InitializeComponent();
             _updateChatWindowDelegate = new UpdateChatWindowDelegate(UpdateChatWindow);
-            _updateConnectedClientsDelegate = new UpdateConnectedClientsDelegate(UpdateClientList);
-            Client = (SimpleClient) _client;
+            _updateConnectedClientsDelegate = new UpdateConnectedClientsDelegate(UpdateClientListBox);
+            Client = (SimpleClient)_client;
             inputChat.Select();
         }
 
@@ -42,7 +42,7 @@ namespace SimpleClient
 
         public void UpdateChatWindow(string message)
         {
-           if(chatRelay.InvokeRequired)
+            if (chatRelay.InvokeRequired)
             {
                 Invoke(_updateChatWindowDelegate, message);
             }
@@ -53,21 +53,31 @@ namespace SimpleClient
                 chatRelay.ScrollToCaret();
             }
         }
-        public void UpdateClientList(List<string> nickname)
+
+        public void UpdateClientListBox(string nickname)
         {
-            if (activeClientList.InvokeRequired)
+            if (clientConnectLB.InvokeRequired)
             {
                 Invoke(_updateConnectedClientsDelegate, nickname);
             }
-            else
+
+            else if (nickname != null)
             {
-                activeClientList.Text = null;
-                for(int i = 0; i < nickname.Count; i++)
+
+                if (!clientConnectLB.Items.Contains(nickname))
+                    clientConnectLB.Items.Add(nickname);
+
+            }
+        }
+        public void ClearUpdateClientListBox(string nickname)
+        {
+
+            for (int i = clientConnectLB.Items.Count - 1; i >= 0; --i)
+            {
+                string removelistitem = nickname;
+                if (clientConnectLB.Items[i].ToString().Contains(removelistitem))
                 {
-                    Console.WriteLine("Nickname before writing to client list is " + nickname);
-                    activeClientList.Text += nickname[i] + "\n";
-                    activeClientList.SelectionStart = activeClientList.Text.Length;
-                    activeClientList.ScrollToCaret();
+                    clientConnectLB.Items.RemoveAt(i);
                 }
             }
         }
@@ -76,9 +86,9 @@ namespace SimpleClient
             Client.Stop();
         }
 
-        private void ConnectDcBtn_Click(object sender, EventArgs e)
+        private void connectButton_Click(object sender, EventArgs e)
         {
-            if(nicknameTextBox.Text != "" && connectDcBtn.Text != "Disconnect")
+            if (nicknameTextBox.Text != "")
             {
                 chatRelay.Text = "Weclome to the Chat room\n";
                 Client.TCPClientSend(new NickNamePacket(nicknameTextBox.Text));
@@ -86,16 +96,28 @@ namespace SimpleClient
                 nicknameTextBox.Visible = false;
                 inputChat.Visible = true;
                 btnSubmit.Visible = true;
-                connectDcBtn.Text = "Disconnect";
-
+                connectButton.Visible = false;
             }
             else
             {
-                Client.UDPClientSend(new DisconnectPacket(nicknameTextBox.Text));
-                Client.Stop();
+                MessageBox.Show("NICKNAME MUST BE CHOSEN");
             }
         }
 
-
+        private void disconnectButton_Click(object sender, EventArgs e)
+        {
+            bool clientDcPressed = true;
+            Client.UDPClientSend(new DisconnectPacket(clientDcPressed));
+            //Client.TCPClientSend(new DisconnectedNicknames(nicknameTextBox.Text));
+            nicknameLabel.Visible = true;
+            nicknameTextBox.Visible = true;
+            inputChat.Visible = false;
+            btnSubmit.Visible = false;
+            connectButton.Visible = true;
+           
+        }
     }
 }
+
+
+
