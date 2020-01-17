@@ -15,6 +15,5 @@ namespace SimpleClient
             client.Connect("127.0.0.1", 4444);
             client.Run();
         }
-        //DRAW IO UML DIAGRAM FOR THE THREADS, ADD PRIVATE MESSAGING, TEXT BASED GAME, FIX SMALL ERRORS
     }
 }

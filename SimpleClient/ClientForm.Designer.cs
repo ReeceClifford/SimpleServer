@@ -36,6 +36,7 @@
             this.nicknameLabel = new System.Windows.Forms.Label();
             this.clientConnectLB = new System.Windows.Forms.ListBox();
             this.disconnectButton = new System.Windows.Forms.Button();
+            this.tankGameBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnSubmit
@@ -112,11 +113,23 @@
             this.disconnectButton.UseVisualStyleBackColor = true;
             this.disconnectButton.Click += new System.EventHandler(this.disconnectButton_Click);
             // 
+            // tankGameBtn
+            // 
+            this.tankGameBtn.Location = new System.Drawing.Point(865, 505);
+            this.tankGameBtn.Name = "tankGameBtn";
+            this.tankGameBtn.Size = new System.Drawing.Size(139, 55);
+            this.tankGameBtn.TabIndex = 11;
+            this.tankGameBtn.Text = "Play Tanks";
+            this.tankGameBtn.UseVisualStyleBackColor = true;
+            this.tankGameBtn.Visible = false;
+            this.tankGameBtn.Click += new System.EventHandler(this.tankGameBtn_Click);
+            // 
             // ClientForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1016, 573);
+            this.Controls.Add(this.tankGameBtn);
             this.Controls.Add(this.disconnectButton);
             this.Controls.Add(this.clientConnectLB);
             this.Controls.Add(this.nicknameLabel);
@@ -144,5 +157,6 @@
         private System.Windows.Forms.Label nicknameLabel;
         private System.Windows.Forms.ListBox clientConnectLB;
         private System.Windows.Forms.Button disconnectButton;
+        private System.Windows.Forms.Button tankGameBtn;
     }
 }

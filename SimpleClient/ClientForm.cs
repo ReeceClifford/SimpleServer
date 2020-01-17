@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.VisualBasic;
 
 namespace SimpleClient
 {
@@ -15,17 +16,18 @@ namespace SimpleClient
         delegate void UpdateChatWindowDelegate(string message);
         UpdateChatWindowDelegate _updateChatWindowDelegate;
 
-        delegate void UpdateConnectedClientsDelegate(string nicknames);
+        delegate void UpdateConnectedClientsDelegate(List<string> nicknames);
         UpdateConnectedClientsDelegate _updateConnectedClientsDelegate;
 
         SimpleClient Client;
-
+      
         public ClientForm(object _client)
         {
             InitializeComponent();
             _updateChatWindowDelegate = new UpdateChatWindowDelegate(UpdateChatWindow);
             _updateConnectedClientsDelegate = new UpdateConnectedClientsDelegate(UpdateClientListBox);
             Client = (SimpleClient)_client;
+           
             inputChat.Select();
         }
 
@@ -54,35 +56,26 @@ namespace SimpleClient
             }
         }
 
-        public void UpdateClientListBox(string nickname)
+        public void UpdateClientListBox(List<string> nicknameList)
         {
             if (clientConnectLB.InvokeRequired)
             {
-                Invoke(_updateConnectedClientsDelegate, nickname);
+                Invoke(_updateConnectedClientsDelegate, nicknameList);
             }
-
-            else if (nickname != null)
+            else
             {
-
-                if (!clientConnectLB.Items.Contains(nickname))
-                    clientConnectLB.Items.Add(nickname);
-
-            }
-        }
-        public void ClearUpdateClientListBox(string nickname)
-        {
-
-            for (int i = clientConnectLB.Items.Count - 1; i >= 0; --i)
-            {
-                string removelistitem = nickname;
-                if (clientConnectLB.Items[i].ToString().Contains(removelistitem))
+                clientConnectLB.Items.Clear();          
+                for(int i = 0; i < nicknameList.Count; i++ )
                 {
-                    clientConnectLB.Items.RemoveAt(i);
+                    clientConnectLB.Items.Add(nicknameList[i]);
                 }
             }
-        }
+        }      
+
         private void ClientForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            bool clientDcPressed = true;
+            Client.UDPClientSend(new DisconnectPacket(clientDcPressed));
             Client.Stop();
         }
 
@@ -97,6 +90,7 @@ namespace SimpleClient
                 inputChat.Visible = true;
                 btnSubmit.Visible = true;
                 connectButton.Visible = false;
+                tankGameBtn.Visible = true;
             }
             else
             {
@@ -108,14 +102,28 @@ namespace SimpleClient
         {
             bool clientDcPressed = true;
             Client.UDPClientSend(new DisconnectPacket(clientDcPressed));
-            //Client.TCPClientSend(new DisconnectedNicknames(nicknameTextBox.Text));
+            clientConnectLB.Items.Clear();
             nicknameLabel.Visible = true;
             nicknameTextBox.Visible = true;
             inputChat.Visible = false;
             btnSubmit.Visible = false;
             connectButton.Visible = true;
-           
+            tankGameBtn.Visible = false;
         }
+
+        private void tankGameBtn_Click(object sender, EventArgs e)
+        {
+            Client.LoadMainGame();
+        }
+
+        //private void clientConnectLB_DoubleClick(object sender, EventArgs e)
+        //{
+        //    string targetNickname = clientConnectLB.GetItemText(clientConnectLB.SelectedItem);
+        //    Client.TCPClientSend(new PrivateMessageRequest(targetNickname));
+        //    PrivateMessaging pmForm = new PrivateMessaging(sender);
+
+        //    pmForm.Show();
+        //}
     }
 }
 

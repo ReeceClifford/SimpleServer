@@ -10,6 +10,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
+using System.Drawing;
 
 namespace SimpleClient
 {
@@ -25,6 +26,11 @@ namespace SimpleClient
         BinaryFormatter binaryFormatter;
         ClientForm messageForm;
         Thread readerThread;
+       
+
+        TankGame mainGame;
+
+        Thread gameThread;
 
         public object _clients { get; private set; }
 
@@ -34,7 +40,22 @@ namespace SimpleClient
         public void SimpleClientMain()
         {
             messageForm = new ClientForm(this);
+           
+            //Game Stuff
+            mainGame = new TankGame(this);
         }
+        public void LoadMainGame()
+        {
+            mainGame.Show();
+        }
+
+        // Private Messaging 
+        //        public void PrivateMessageMain()
+        //{
+        //    pmThread = new Thread(PrivateMessageMain);
+        //    pmForm = new PrivateMessaging(this);
+        //    Application.Run(pmForm);
+        //}
 
         public bool Connect(string ipAddress, int port)
         {
@@ -49,14 +70,11 @@ namespace SimpleClient
                 writer = new BinaryWriter(stream, System.Text.Encoding.UTF8);
                 binaryFormatter = new BinaryFormatter();
                 tcpClientConnect = true;
-
                 Packet loginPacket = LoginPacket(udpClient.Client.LocalEndPoint);
                 TCPClientSend(loginPacket);
-
                 readerThread = new Thread(TCPServerResponse);
-                
+                gameThread = new Thread(LoadMainGame);
                 Application.Run(messageForm);
-
                 Console.WriteLine("Connected");
             }
             catch 
@@ -88,7 +106,7 @@ namespace SimpleClient
             return loginPacket;
         }
 
-        private void TCPServerResponse() 
+        private void TCPServerResponse() //TCP Read is also here
         {
             while (tcpClientConnect)
             {
@@ -118,7 +136,16 @@ namespace SimpleClient
                             tUdpClientMethod.Start();
                             udpClientConnect = true;
                             break;
-
+                        // Private Messaging
+                                                        //case PacketType.PRIVATEMESSAGEREQUEST:
+                                //    Console.WriteLine("Pm Recieved");
+                                //    PrivateMessageRequest privateMessagePack = (PrivateMessageRequest)packet;
+                                //    PrivateMessageMain();
+                                //    break;
+                                //case PacketType.PRIVATEMESSAGETOSEND:
+                                //    PrivateMessageToSend privateMessageToSend = (PrivateMessageToSend)packet;
+                                //    pmForm.UpdatePrivateMessageChatWindow(privateMessageToSend.privateMessageToSend);
+                                //    break;
                     }
                 }
             }
@@ -130,25 +157,23 @@ namespace SimpleClient
             {
                 while(udpClientConnect)
                 {
-                    Packet udpReadPacket = udpClientRead();
+                    Packet udpReadPacket = UDPClientRead();
                     switch (udpReadPacket.type)
                     {
-                        //case PacketType.NICKNAME:
-                        //    NickNamePacket nicknamePacket = (NickNamePacket)udpReadPacket;
-                        //    Console.WriteLine(nicknamePacket.nickName);
-                        //    messageForm.UpdateClientList(nicknamePacket.nickName);
-                        //    break;
-                        case PacketType.CLIENTSCONNECTED:
-                           
+                        case PacketType.NICKNAMESCONNECTED:
                             ConnectedNicknames connectedNicknamePack = (ConnectedNicknames)udpReadPacket;
                             Console.WriteLine("Clients connected are " + connectedNicknamePack.nicknamesConnected);
                             messageForm.UpdateClientListBox(connectedNicknamePack.nicknamesConnected);
                             break;
-                        //case PacketType.DISCONNECTEDCLIENT:
-                        //    DisconnectedNicknames disconnectedNicknames = (DisconnectedNicknames)udpReadPacket;
-                        //    messageForm.ClearUpdateClientListBox(disconnectedNicknames.disconnectedNickname);
-
-                        //    break;
+                        case PacketType.GAMEINFORMATION:
+                            GameInfoUpdate gameInfoUpdatePacket = (GameInfoUpdate)udpReadPacket;
+                            mainGame.UpdateDictionaryInfo(gameInfoUpdatePacket.clientGameTankPacket);
+                            mainGame.ForcePaint();
+                            break;
+                        case PacketType.GAMESPRITE:
+                            GameInfoSpriteUpdate gameInfoSpriteUpdate = (GameInfoSpriteUpdate)udpReadPacket;
+                            mainGame.UpdateSpriteInfo(gameInfoSpriteUpdate.cliengGameSpriteInfo);
+                            break;
                     }
                 }
             }
@@ -158,6 +183,7 @@ namespace SimpleClient
             }
         }
 
+        
         public void TCPClientSend(Packet data) 
         {
             MemoryStream ms = new MemoryStream();
@@ -178,7 +204,7 @@ namespace SimpleClient
             udpClient.Send(buffer, buffer.Length);
         }
 
-        public Packet udpClientRead()
+        public Packet UDPClientRead()
         {
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 4444);
             byte[] bytes = new byte[256];

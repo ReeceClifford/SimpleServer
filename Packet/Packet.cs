@@ -4,23 +4,37 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net;
+using System.Drawing;
 
 public enum PacketType
 {
     EMPTY,
+    LOGIN,
     CHATMESSAGE,
     NICKNAME,
-    LOGIN,
-    CLIENTSCONNECTED,
+    NICKNAMESCONNECTED,
     DISCONNECT,
-    CLEARCONNECTEDLIST,
-    DISCONNECTEDCLIENT,
+    GAMEINFORMATION,
+    GAMESPRITE,
+    GAMEMOVE,
 }
 
 [Serializable]
 public class Packet
 {
     public PacketType type = PacketType.EMPTY;
+}
+
+
+[Serializable]
+public class LoginPacket : Packet
+{
+    public EndPoint endPoint;
+    public LoginPacket(EndPoint endPoint)
+    {
+        this.type = PacketType.LOGIN;
+        this.endPoint = endPoint;
+    }
 }
 
 [Serializable]
@@ -35,17 +49,6 @@ public class ChatMessagePacket : Packet
 }
 
 [Serializable]
-public class ConnectedNicknames : Packet
-{
-    public string nicknamesConnected;
-    public ConnectedNicknames(string nicknamesConnected)
-    {
-        this.type = PacketType.CLIENTSCONNECTED;
-        this.nicknamesConnected = nicknamesConnected;
-    }
-}
-
-[Serializable]
 public class NickNamePacket : Packet
 {
     public string nickName;
@@ -56,15 +59,27 @@ public class NickNamePacket : Packet
     }
 }
 
-//public class DisconnectedNicknames : Packet
-//{
-//    public string disconnectedNickname;
-//    public DisconnectedNicknames(string disconnectedNickname)
-//    {
-//        this.type = PacketType.CLIENTSCONNECTED;
-//        this.disconnectedNickname = disconnectedNickname;
-//    }
-//}
+[Serializable]
+public class GameMovePacket : Packet
+{
+    public string gameMove;
+    public GameMovePacket(string gameMove)
+    {
+        this.type = PacketType.GAMEMOVE;
+        this.gameMove = gameMove;
+    }
+}
+
+[Serializable]
+public class ConnectedNicknames : Packet
+{
+    public List<string> nicknamesConnected;
+    public ConnectedNicknames(List<string> nicknamesConnected)
+    {
+        this.type = PacketType.NICKNAMESCONNECTED;
+        this.nicknamesConnected = nicknamesConnected;
+    }
+}
 
 [Serializable]
 public class DisconnectPacket : Packet
@@ -77,16 +92,31 @@ public class DisconnectPacket : Packet
     }
 }
 
-//Added for UDP and TCP Task
 [Serializable]
-public class LoginPacket : Packet
+public class GameInfoUpdate : Packet
 {
-    public EndPoint endPoint;
-    public LoginPacket(EndPoint endPoint)
+    public Dictionary<string, Point> clientGameTankPacket;
+
+    public GameInfoUpdate(Dictionary<string, Point> clientGameTankPacket)
     {
-        this.type = PacketType.LOGIN;
-        this.endPoint = endPoint;
+        this.type = PacketType.GAMEINFORMATION;
+        this.clientGameTankPacket = clientGameTankPacket;
     }
 }
+
+[Serializable]
+public class GameInfoSpriteUpdate : Packet
+{
+    public  Dictionary<string, string> cliengGameSpriteInfo;
+
+    public GameInfoSpriteUpdate(Dictionary<string, string> cliengGameSpriteInfo)
+    {
+        this.type = PacketType.GAMESPRITE;
+        this.cliengGameSpriteInfo = cliengGameSpriteInfo;
+    }
+}
+
+
+
 
 
