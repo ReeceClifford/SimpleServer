@@ -18,7 +18,10 @@ namespace SimpleClient
         //Game Info
         Dictionary<string, Point> clientGameTank = new Dictionary<string, Point>();
         Dictionary<string, string> tankSprite = new Dictionary<string, string>();
-     
+        Dictionary<string, Point> clientBomb = new Dictionary<string, Point>();
+        Dictionary<string, string> bombSprie = new Dictionary<string, string>();
+        
+
         public TankGame(object client)
         {
             InitializeComponent();
@@ -39,14 +42,28 @@ namespace SimpleClient
         {
             tankSprite = spriteInfoDictionary;
         }
+        public void UpdateBombDictionaryInfo(Dictionary<string, Point> clientGameBombInfoDictionary)
+        {
+            clientBomb = clientGameBombInfoDictionary;
+        }
+
+        public void UpdateBombSpriteInfo(Dictionary<string, string> spriteBombInfoDictionary)
+        {
+            bombSprie = spriteBombInfoDictionary;
+        }
 
         private void TankGame_Paint(object sender, PaintEventArgs e)
         {
-            for(int i = 0; i < clientGameTank.Count; i++ )
+            for (int i = 0; i < clientGameTank.Count; i++)
             {
                 e.Graphics.DrawImage(new Bitmap("TankSprite.png"), clientGameTank[clientGameTank.ElementAt(i).Key].X, clientGameTank[clientGameTank.ElementAt(i).Key].Y);
             }
-            
+            for (int i = 0; i < clientBomb.Count; i++)
+            {
+                e.Graphics.DrawImage(new Bitmap("MainBombSprite.png"), clientBomb[clientBomb.ElementAt(i).Key].X, clientBomb[clientBomb.ElementAt(i).Key].Y);
+            }
+
+
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -59,7 +76,6 @@ namespace SimpleClient
             this.Invalidate();
         }
 
-   
         private void TankGame_KeyDown(object sender, KeyEventArgs e)
         {
 
@@ -77,8 +93,21 @@ namespace SimpleClient
                 case 83: //S
                     Client.UDPClientSend(new GameMovePacket("Downwards"));
                     break;
+                case 38: //Up
+                    Client.UDPClientSend(new GameBombMovePacket("Upwards"));
+                    break;
+                case 37: //Left
+                    Client.UDPClientSend(new GameBombMovePacket("Left"));
+                    break;
+                case 39: //Right
+                    Client.UDPClientSend(new GameBombMovePacket("Right"));
+                    break;
+                case 40: //Down
+                    Client.UDPClientSend(new GameBombMovePacket("Downwards"));
+                    break;
 
             }
         }
+
     }
 }

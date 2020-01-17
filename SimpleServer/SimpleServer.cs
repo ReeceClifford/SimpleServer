@@ -30,8 +30,10 @@ namespace SimpleServer
         //Graphical Game Logic
         Dictionary<string, Point> clientGameTank = new Dictionary<string, Point>();
         Dictionary<string, string> tankSprite = new Dictionary<string, string>();
+        Dictionary<string, Point> clientBomb = new Dictionary<string, Point>();
+        Dictionary<string, string>bombSprie = new Dictionary<string, string>();
 
-     
+      
 
         int randomX;
         int randomY;
@@ -144,16 +146,30 @@ namespace SimpleServer
         public void PushTankGameLogic(object clientObj)
         {
             Client client = (Client)clientObj;
+
             GameInfoUpdate gameInfoUpdate = new GameInfoUpdate(clientGameTank);
             for (int i = 0; i < clientGameTank.Count; i++)
             {
                 client.UDPSend(gameInfoUpdate);
             }
+
             GameInfoSpriteUpdate gameInforSpriteUpdate = new GameInfoSpriteUpdate(tankSprite);
             for (int i = 0; i < tankSprite.Count; i++)
             {
                 client.UDPSend(gameInforSpriteUpdate);
             }
+
+            GameInfoBombUpdate gameInfoBombUpdate = new GameInfoBombUpdate(clientBomb);
+            for (int i = 0; i < clientBomb.Count; i++)
+            {
+                client.UDPSend(gameInfoBombUpdate);
+            }
+            GameInfoBombSpriteUpdate gameInforBombSpriteUpdate = new GameInfoBombSpriteUpdate(bombSprie);
+            for (int i = 0; i < bombSprie.Count; i++)
+            {
+                client.UDPSend(gameInforBombSpriteUpdate);
+            }
+
 
         }
         private void HandlePacket(object clientObj, Packet packet)
@@ -210,7 +226,8 @@ namespace SimpleServer
                     PushClientList(clientObj);
                     clientGameTank.Add(client.nickName, new Point(MakeRandomXNumber(), MakeRandomYNumber()));
                     tankSprite.Add(client.nickName, "TankSprite.png");
-                    
+                    clientBomb.Add(client.nickName, new Point(MakeRandomXNumber() + 10, MakeRandomYNumber() - 40));
+                    bombSprie.Add(client.nickName, "MainBombSprie.png");
                     PushTankGameLogic(clientObj);
                     break;
                 case PacketType.LOGIN:
@@ -228,7 +245,8 @@ namespace SimpleServer
                         clientNicknames.Remove(client.nickName);
                         clientGameTank.Remove(client.nickName);
                         tankSprite.Remove(client.nickName);
-
+                        clientBomb.Remove(client.nickName);
+                        bombSprie.Remove(client.nickName);
                     }
                     PushClientList(clientObj);
                     break;
@@ -236,6 +254,41 @@ namespace SimpleServer
                     GameMovePacket gameMovePack = (GameMovePacket)packetToHandle;
                     string movementRequested = gameMovePack.gameMove;
                     GameTanksMovement(clientObj, movementRequested);
+                    break;
+
+                case PacketType.GAMEBOMBMOVE:
+                    GameBombMovePacket gameBombMovePack = (GameBombMovePacket)packetToHandle;
+                    string dropBomb = gameBombMovePack.gameBombMove;
+                    GameBombMovement(clientObj, dropBomb);
+                    break;
+            }
+        }
+        public void GameBombMovement(object clientObj, string movementBombRequested)
+        {
+            Client client = (Client)clientObj;
+            switch(movementBombRequested)
+            {
+                case "Upwards":
+                    clientBomb[client.nickName] = new Point(clientBomb[client.nickName].X + 0, clientBomb[client.nickName].Y - 10);
+                 
+
+                        PushTankGameLogic(clientObj);
+                    break;
+                case "Downwards":
+
+                    clientBomb[client.nickName] = new Point(clientBomb[client.nickName].X + 0, clientBomb[client.nickName].Y + 10);
+                   
+                    PushTankGameLogic(clientObj);
+                    break;
+                case "Right":
+                    clientBomb[client.nickName] = new Point(clientBomb[client.nickName].X + 10, clientBomb[client.nickName].Y - 0);
+                   
+                    PushTankGameLogic(clientObj);
+                    break;
+                case "Left":
+                    clientBomb[client.nickName] = new Point(clientBomb[client.nickName].X - 10, clientBomb[client.nickName].Y - 0);
+                   
+                    PushTankGameLogic(clientObj);
                     break;
             }
         }
@@ -251,16 +304,17 @@ namespace SimpleServer
                         clientGameTank[client.nickName] = new Point(clientGameTank[client.nickName].X + 0, clientGameTank[client.nickName].Y + 10);
                         break;
                     }
+                   
                     PushTankGameLogic(clientObj);
                     break;
                 case "Downwards":
-
                     clientGameTank[client.nickName] = new Point(clientGameTank[client.nickName].X + 0, clientGameTank[client.nickName].Y + 10);
                     if (clientGameTank[client.nickName].Y > 380)
                     {
                         clientGameTank[client.nickName] = new Point(clientGameTank[client.nickName].X + 0, clientGameTank[client.nickName].Y - 10);
                         break;
                     }
+                   
                     PushTankGameLogic(clientObj);
                     break;
                 case "Right":
@@ -269,16 +323,18 @@ namespace SimpleServer
                     {
                         clientGameTank[client.nickName] = new Point(clientGameTank[client.nickName].X - 10, clientGameTank[client.nickName].Y - 0);
                         break;
-                    }    
+                    }
+                   
                     PushTankGameLogic(clientObj);
                     break;
                 case "Left":
                     clientGameTank[client.nickName] = new Point(clientGameTank[client.nickName].X - 10, clientGameTank[client.nickName].Y - 0);
-                    if(clientGameTank[client.nickName].X < 0)
+                    if (clientGameTank[client.nickName].X < 0)
                     {
                         clientGameTank[client.nickName] = new Point(clientGameTank[client.nickName].X + 10, clientGameTank[client.nickName].Y - 0);
                         break;
-                    }       
+                    }
+                 
                     PushTankGameLogic(clientObj);
                     break;
             }

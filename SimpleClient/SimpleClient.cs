@@ -46,7 +46,7 @@ namespace SimpleClient
         }
         public void LoadMainGame()
         {
-            mainGame.Show();
+            mainGame.ShowDialog();
         }
 
         // Private Messaging 
@@ -173,6 +173,15 @@ namespace SimpleClient
                         case PacketType.GAMESPRITE:
                             GameInfoSpriteUpdate gameInfoSpriteUpdate = (GameInfoSpriteUpdate)udpReadPacket;
                             mainGame.UpdateSpriteInfo(gameInfoSpriteUpdate.cliengGameSpriteInfo);
+                            break;
+                        case PacketType.GAMEBOMBINFORMATION:
+                            GameInfoBombUpdate gameInfoBombUpdatePacket = (GameInfoBombUpdate)udpReadPacket;
+                            mainGame.UpdateBombDictionaryInfo(gameInfoBombUpdatePacket.clientGameBombPacket);
+                            mainGame.ForcePaint();
+                            break;
+                        case PacketType.GAMEBOMBSPRITE:
+                            GameInfoBombSpriteUpdate gameInfoBombSpriteUpdate = (GameInfoBombSpriteUpdate)udpReadPacket;
+                            mainGame.UpdateBombSpriteInfo(gameInfoBombSpriteUpdate.cliengGameBombSpriteInfo);
                             break;
                     }
                 }

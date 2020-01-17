@@ -17,6 +17,9 @@ public enum PacketType
     GAMEINFORMATION,
     GAMESPRITE,
     GAMEMOVE,
+    GAMEBOMBMOVE,
+    GAMEBOMBINFORMATION,
+    GAMEBOMBSPRITE,
 }
 
 [Serializable]
@@ -113,6 +116,40 @@ public class GameInfoSpriteUpdate : Packet
     {
         this.type = PacketType.GAMESPRITE;
         this.cliengGameSpriteInfo = cliengGameSpriteInfo;
+    }
+}
+[Serializable]
+public class GameInfoBombUpdate : Packet
+{
+    public Dictionary<string, Point> clientGameBombPacket;
+
+    public GameInfoBombUpdate(Dictionary<string, Point> clientGameBombPacket)
+    {
+        this.type = PacketType.GAMEBOMBINFORMATION;
+        this.clientGameBombPacket = clientGameBombPacket;
+    }
+}
+
+[Serializable]
+public class GameInfoBombSpriteUpdate : Packet
+{
+    public Dictionary<string, string> cliengGameBombSpriteInfo;
+
+    public GameInfoBombSpriteUpdate(Dictionary<string, string> cliengGameBombSpriteInfo)
+    {
+        this.type = PacketType.GAMEBOMBSPRITE;
+        this.cliengGameBombSpriteInfo = cliengGameBombSpriteInfo;
+    }
+}
+
+[Serializable]
+public class GameBombMovePacket : Packet
+{
+    public string gameBombMove;
+    public GameBombMovePacket(string gameBombMove)
+    {
+        this.type = PacketType.GAMEBOMBMOVE;
+        this.gameBombMove = gameBombMove;
     }
 }
 
