@@ -150,24 +150,24 @@ namespace SimpleServer
             GameInfoUpdate gameInfoUpdate = new GameInfoUpdate(clientGameTank);
             for (int i = 0; i < clientGameTank.Count; i++)
             {
-                client.UDPSend(gameInfoUpdate);
+                clientsList[i].UDPSend(gameInfoUpdate);
             }
 
             GameInfoSpriteUpdate gameInforSpriteUpdate = new GameInfoSpriteUpdate(tankSprite);
             for (int i = 0; i < tankSprite.Count; i++)
             {
-                client.UDPSend(gameInforSpriteUpdate);
+                clientsList[i].UDPSend(gameInforSpriteUpdate);
             }
 
             GameInfoBombUpdate gameInfoBombUpdate = new GameInfoBombUpdate(clientBomb);
             for (int i = 0; i < clientBomb.Count; i++)
             {
-                client.UDPSend(gameInfoBombUpdate);
+                clientsList[i].UDPSend(gameInfoBombUpdate);
             }
             GameInfoBombSpriteUpdate gameInforBombSpriteUpdate = new GameInfoBombSpriteUpdate(bombSprie);
             for (int i = 0; i < bombSprie.Count; i++)
             {
-                client.UDPSend(gameInforBombSpriteUpdate);
+                clientsList[i].UDPSend(gameInforBombSpriteUpdate);
             }
 
 
